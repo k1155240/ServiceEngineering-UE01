@@ -1,3 +1,2 @@
 cmd /c gulp
-nodemon build/server/server.js
-pause
+cmd /c nodemon build/server/server.js

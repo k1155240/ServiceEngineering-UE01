@@ -2,9 +2,9 @@ var React = require('react');
 var Search = require('./Search.jsx');
 var TaskList = require('./TaskList.jsx');
 
-var App = React.createClass({
+var Home = React.createClass({
 	searchForAddress(term){
-		alert(term);
+		alert(term); 
 	},
 	render(){
 		return (
@@ -18,4 +18,4 @@ var App = React.createClass({
 	}
 });
 
-module.exports = App;
+module.exports = Home;
