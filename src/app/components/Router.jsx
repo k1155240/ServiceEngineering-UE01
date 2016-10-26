@@ -15,6 +15,9 @@ var router = React.createClass({
                 <Route path="/" component={Layout}>
                     <IndexRoute component={Home} />
                 </Route>
+                <Route path="/index.html" component={Layout}>
+                    <IndexRoute component={Home} />
+                </Route>
             </Router>
 		);
 	}
