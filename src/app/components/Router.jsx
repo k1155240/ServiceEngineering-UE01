@@ -7,6 +7,7 @@ var browserHistory = require('react-router').browserHistory;
 
 var Layout = require('./Layout.jsx');
 var Home = require('./Home.jsx');
+var Projects = require('./Projects.jsx');
 
 var router = React.createClass({
     render(){
@@ -14,9 +15,8 @@ var router = React.createClass({
 			<Router history={browserHistory}>
                 <Route path="/" component={Layout}>
                     <IndexRoute component={Home} />
-                </Route>
-                <Route path="/index.html" component={Layout}>
-                    <IndexRoute component={Home} />
+                    <Route path="/index.html" component={Home}>/></Route>
+                    <Route path="projects" component={Projects}></Route>
                 </Route>
             </Router>
 		);
