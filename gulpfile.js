@@ -28,12 +28,21 @@ gulp.task("copyfonts", function () {
 });
 
 
-gulp.task("update",["copyclient"],function(){
+gulp.task("update",["copyclient", "copyserver"],function(){
+   console.log("Update completed..."); 
+});
+
+gulp.task("updateClient",["copyclient"],function(){
+   console.log("Update completed..."); 
+});
+
+gulp.task("updateServer",["copyserver"],function(){
    console.log("Update completed..."); 
 });
 
 gulp.task("watch", function(){
-   gulp.watch(['src/app/**/*.jsx', 'src/app/style.css', 'src/app/index.html'], ['update']);
+   gulp.watch(['src/app/**/*.jsx', 'src/app/style.css', 'src/app/index.html'], ['updateClient']);
+   gulp.watch(['src/server/**/*.js'], ['updateServer']);
 });
 
 gulp.task("default",["copyserver", "copyclient", "copyfonts"],function(){
