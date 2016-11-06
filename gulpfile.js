@@ -14,7 +14,7 @@ gulp.task("bundle", function () {
 });
 
 gulp.task("copyserver", function () {
-    return gulp.src(["src/server/server.js"])
+    return gulp.src(["src/server/server.js", "src/server/mongo.js"])
         .pipe(gulp.dest("build/server"));
 });
 
@@ -42,7 +42,7 @@ gulp.task("updateServer",["copyserver"],function(){
 
 gulp.task("watch", function(){
    gulp.watch(['src/app/**/*.jsx', 'src/app/style.css', 'src/app/index.html'], ['updateClient']);
-   gulp.watch(['src/server/**/*.js'], ['updateServer']);
+   gulp.watch(['src/server/server.js', 'src/server/mongo.js'], ['updateServer']);
 });
 
 gulp.task("default",["copyserver", "copyclient", "copyfonts"],function(){
