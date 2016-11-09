@@ -1,24 +1,20 @@
 var React = require('react');
-var Link = require('react-router').Link;
 
-
-var TaskListItem = React.createClass({
+var Milestone = React.createClass({
 	handleClick(){
-		
+		this.props.onClick(this.props.title);
+
 	},
 
 	render() {
 		return (
-			<div>
-			<p><Link to={'/taskdetail/'}>taskcreatetask</Link></p>
 			<a className="list-group-item" onClick={this.handleClick}>
 				{this.props.title}
 				<span className="glyphicon glyphicon-menu-right"></span>
 			</a>
-			</div>
 		);
 
 	}
 });
 
-module.exports = TaskListItem;
+module.exports = Milestone;

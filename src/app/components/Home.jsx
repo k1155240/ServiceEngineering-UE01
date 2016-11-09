@@ -1,6 +1,5 @@
 var React = require('react');
 var Search = require('./Search.jsx');
-var TaskList = require('./TaskList.jsx');
 var Link = require('react-router').Link;
 
 var Home = React.createClass({
@@ -10,10 +9,12 @@ var Home = React.createClass({
 	render(){
 		return (
 			<div>
-				<h1>Your Tasks</h1>
-				<Link to={'/projects/'}>projects</Link>		
+				<h1>Dashboard</h1>
+				<p><Link to={'/projects/'}>Projects</Link></p>
+				<p><Link to={'/milestones/'}>Milestones</Link></p>
+				<p><Link to={'/tasks/'}>Tasks</Link></p>
+				<p><Link to={'/problemOverview/'}>Problems</Link></p>			
 				<Search onSearch={this.searchForAddress} />
-				<TaskList onClick={this.searchForAddress} /> 
 			</div>
 		);
 	}
