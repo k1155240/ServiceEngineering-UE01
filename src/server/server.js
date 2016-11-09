@@ -120,6 +120,30 @@ router.route('/tasks/:task_id/comments')
            res.json(items);
         });
     });
+	
+router.route('/comments')
+
+    // get all the comments (accessed at GET /api/comments)
+    .get(function(req, res) {
+        Mongo.findAllComments(function(items) {
+            res.json(items);
+        });
+    });
+	
+router.route('/createComment')
+	// post comment to db
+	.post(function(req, res) {
+        
+        var id = req.body.id;
+        if (id) {
+            Mongo.updateComment(id, req.body.user, req.body.task, req.body.type, req.body.text, req.body.state);
+            
+        } else{
+            Mongo.insertComment(req.body.user, req.body.task, req.body.type, req.body.text, req.body.state);
+        }
+        
+        //TODO: ID zurück geben
+    })
 
 router.route('/issues')
 
