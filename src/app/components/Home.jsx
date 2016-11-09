@@ -7,6 +7,7 @@ var Home = React.createClass({
 	searchForAddress(term){
 		alert(term); 
 	},
+	
 	render(){
 		return (
 			<div>
