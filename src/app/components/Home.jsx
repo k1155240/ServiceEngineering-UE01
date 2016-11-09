@@ -8,6 +8,7 @@ var Home = React.createClass({
 		alert(term); 
 	},
 	
+	
 	render(){
 		return (
 			<div>
