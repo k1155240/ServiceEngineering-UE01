@@ -5,7 +5,7 @@ var Milestone = require('./Milestone.jsx');
 
 var MilestoneList = React.createClass({
 	getInitialState() {
-		return { projects: [] };
+		return { milestones: [] };
 	},
 
 	componentDidMount() {

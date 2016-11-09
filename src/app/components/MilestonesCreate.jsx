@@ -6,9 +6,9 @@ var MilestonesCreate = React.createClass({
  sendToDb() {
     request
     .post('/api/projects/projects_id')
-    .send({user: document.getElementById("from").value,
-           task: document.getElementById("to").value,
-           type: document.getElementById("description").value,
+    .send({from: document.getElementById("from").value,
+           to: document.getElementById("to").value,
+           description: document.getElementById("description").value,
            })
     .set('Accept', 'application/json')  
     .end(function(err, res) {	      
@@ -22,19 +22,19 @@ render(){
             </div>
            
             <div className="form-group row">
-                <label for="Task1">Meilenstein</label>
+                <label for="M1">Meilenstein</label>
                 <input type="text" className="form-control"  id="description" placeholder="Meilenstein + Thema"/>
             </div>
             <div className="form-group row">
-                <label for="Task3">Meilenstein beginnt am</label>
-                <input type="text" className="form-control" id="M4" placeholder="YYYYMMDD"/>
+                <label for="M3">Meilenstein beginnt am</label>
+                <input type="text" className="form-control" id="from" placeholder="YYYY-MM-DD"/>
             </div>
             <div className="form-group row">
-                <label for="Task3">Meilenstein endet am</label>
-                <input type="text" className="form-control" id="M5" placeholder="YYYYMMDD"/>
+                <label for="M3">Meilenstein endet am</label>
+                <input type="text" className="form-control" id="to" placeholder="YYYY-MM-DD"/>
             </div>
             
-            <button type="submit" className="button">Meilenstein anlegen</button>
+            <p><button onClick={this.sendToDb}>Meilenstein anlegen</button></p>
         </div>
 		)
 	}

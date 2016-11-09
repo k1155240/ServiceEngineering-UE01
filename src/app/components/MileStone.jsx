@@ -9,7 +9,9 @@ var Milestone = React.createClass({
 	render() {
 		return (
 			<a className="list-group-item" onClick={this.handleClick}>
-				{this.props.title}
+				Description: {this.props.description}<br/>
+				From: {this.props.from}<br/>
+				To: {this.props.to}
 				<span className="glyphicon glyphicon-menu-right"></span>
 			</a>
 		);

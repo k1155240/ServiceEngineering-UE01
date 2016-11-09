@@ -4,14 +4,14 @@ var MilestoneList = require('./MilestoneList.jsx');
 var browserHistory = require('react-router').browserHistory;
 
 var Milestones = React.createClass({
-		searchForAddress(term){
-		alert(term); 
-	},
-	onClick(event) {
-		browserHistory.push("/milestonedetail/");
-	},
-	ButtonClicked(event) {
-		browserHistory.push("/milestonescreate");
+		//searchForAddress(term){
+		//alert(term); 
+	//},
+	milestonedetail(event) {
+	 	browserHistory.push("/milestonedetail/");
+	 },
+	 milestonescreate(event) {
+	 	browserHistory.push("/milestonescreate");
 	},
 	render(){
 		return (
@@ -19,7 +19,7 @@ var Milestones = React.createClass({
 				<h1>Milestones</h1>
 				<p><Link to={'/milestonescreate'}>+ neuen Meilenstein hinzufügen</Link></p>
 				<p><Link to={'/milestonedetail/'}>Detail Meilenstein</Link></p>
-				<MilestoneList onClick={this.milestonedtail} /> 
+				<MilestoneList onClick={this.milestonedetail} /> 
 			</div>
 		);
 	}
