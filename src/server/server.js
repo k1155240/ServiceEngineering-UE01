@@ -23,10 +23,7 @@ router.route('/projects')
         } else{
             Mongo.insertProject(req.body.title, req.body.description);
         }    
-        
-        //TODO: ID zurück geben
     }) 
-
     // get all the projects (accessed at GET /api/projects)
     .get(function(req, res) {
         //res.json(projects);
@@ -34,7 +31,7 @@ router.route('/projects')
            res.json(items);
         });
     });
- 
+
 router.route('/projects/:project_id')
 
     // get the project with that id (accessed at GET /api/peojects/:project_id)
@@ -60,12 +57,11 @@ router.route('/projects/:project_id/milestones')
     .post(function(req, res) {
         var id = req.body.id;
         if (id) {
-            Mongo.updateMilestone(id, req.body.from, req.body.to, req.body.description, req.params.project_id, req.body.tasks);
+            Mongo.updateMilestone(id, req.body.from, req.body.to, req.body.description, req.params.project_id);
         } else{
-            Mongo.insertMilestone(req.body.from, req.body.to, req.body.description, req.params.project_id, req.body.tasks);
-        }
+            Mongo.insertMilestone(req.body.from, req.body.to, req.body.description, req.params.project_id);
 
-        //TODO: ID zurück geben
+        }           
     })
     
     .delete(function(req, res) {
@@ -84,13 +80,12 @@ router.route('/tasks')
         
         var id = req.body.id;
         if (id) {
-            Mongo.updateTask(id, req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.milestones, req.body.users, req.body.problems, req.body.comments);
+            Mongo.updateTask(id, req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.milestones, req.body.users);
             
         } else{
-            Mongo.insertTask(req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.milestones, req.body.users, req.body.problems, req.body.comments);
+            Mongo.insertTask(req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.milestones, req.body.users);
         }
         
-        //TODO: ID zurück geben
     })
 
     // get all the tasks (accessed at GET /api/tasks)
@@ -114,22 +109,38 @@ router.route('/tasks/:task_id')
 router.route('/tasks/:task_id/comments')
 
     // get the task with that id (accessed at GET /api/tasks/:task_id)
+    .post(function(req, res) {
+        
+        var id = req.body.id;
+        if (id) {
+            Mongo.updateComment(id, req.body.text, req.body.userId, req.body.taskId, req.body.problems, req.body.solution);
+            
+        } else{
+            Mongo.insertComment(req.body.text, req.body.userId, req.body.taskId, req.body.problems, req.body.solution, function(id){
+                res.json(id);
+            });
+            
+        }
+        
+    })
     .get(function(req, res) {
         // res.json(comments.filter(function(c){ return c.taskId == req.params.task_id})); 
          Mongo.findCommentsByTaskId(req.params.task_id, function(items) {
            res.json(items);
         });
     });
-	
+
 router.route('/comments')
 
-    // get all the comments (accessed at GET /api/comments)
+    // get the task with that id (accessed at GET /api/tasks/:task_id)
     .get(function(req, res) {
-        Mongo.findAllComments(function(items) {
-            res.json(items);
+        // res.json(comments.filter(function(c){ return c.taskId == req.params.task_id})); 
+         Mongo.findAllComments(function(items) {
+           res.json(items);
         });
     });
-	
+
+    	
 router.route('/createComment')
 	// post comment to db
 	.post(function(req, res) {
@@ -139,7 +150,8 @@ router.route('/createComment')
             Mongo.updateComment(id, req.body.user, req.body.task, req.body.type, req.body.text, req.body.state);
             
         } else{
-            Mongo.insertComment(req.body.user, req.body.task, req.body.type, req.body.text, req.body.state);
+            console.log('serverlog');
+            console.log(Mongo.insertComment(req.body.user, req.body.task, req.body.type, req.body.text, req.body.state));
         }
         
         //TODO: ID zurück geben
