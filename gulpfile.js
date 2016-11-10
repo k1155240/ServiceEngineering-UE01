@@ -19,7 +19,7 @@ gulp.task("copyserver", function () {
 });
 
 gulp.task("copyclient", ["bundle"], function () {
-    return gulp.src(["src/app/index.html","src/app/lib/bootstrap-css/css/bootstrap.min.css","src/app/style.css"])
+    return gulp.src(["src/app/index.html","src/app/lib/bootstrap-css/css/bootstrap.min.css", "src/app/lib/bootstrap-css/js/bootstrap.min.js","src/app/style.css"])
         .pipe(gulp.dest("build/app"));
 });
 

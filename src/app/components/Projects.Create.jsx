@@ -17,13 +17,19 @@ var CreateProject = React.createClass({
   render() {
     return (
       <div>
-        <h1>Problem Creation</h1>
-        <p><Link to={'/index.html/'}>Home</Link></p>
-        <p><Link to={'/projects'}>Project Overview</Link></p>
-        <p>Title: <input type="text" id="title" defaultValue="" /></p>
-        <p>Description: <input type="text" id="description" defaultValue="" /></p>
-        <p><button onClick={this.sendToDb}>Submit</button></p>
-      </div>
+        <div>
+            <h1>Create new task</h1>
+        </div>
+        <div className="form-group row"> 
+            <label htmlFor="Task1">Title</label>
+            <input type="text" className="form-control"  id="title" placeholder="Title"/>
+        </div>
+        <div className="form-group row">
+            <label htmlFor="Task2">Description</label>
+            <textarea className="form-control" rows="6" id="description" placeholder="Description"/>
+        </div>
+          <p><button className="btn btn-primary" onClick={this.sendToDb}>Submit</button></p>
+        </div>
     );
   }
 });

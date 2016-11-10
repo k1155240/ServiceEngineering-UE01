@@ -14,8 +14,7 @@ var Projects = React.createClass({
 		return (
 			<div>
 				<h1>Projects</h1>
-				<p><Link to={'/index.html/'}>Home</Link></p>
-				<p><button onClick={this.ProjectCreate}>Create Project</button></p>
+				<p><button className="btn btn-default" onClick={this.ProjectCreate}>Create new project</button></p>
 				<ProjectList onClick={this.ProjectDetail} /> 
 			</div>
 		);

@@ -8,8 +8,7 @@ var Project = React.createClass({
 	render() {
 		return (
 			<a className="list-group-item" onClick={this.handleClick}>
-				Title: {this.props.title}<br/>
-				Description: {this.props.description} <br/>
+				{this.props.title}<br/>
 				<span className="glyphicon glyphicon-menu-right"></span>
 			</a>
 		);

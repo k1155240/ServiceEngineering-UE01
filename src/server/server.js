@@ -1,17 +1,55 @@
 var express = require("express");
 var path = require("path");
 var bodyParser = require('body-parser');
+var cookieParser = require('cookie-parser')
+var session = require('express-session')
 
 var Mongo = require('./mongo.js');
+
+var passport = require('passport')
+  , FacebookStrategy = require('passport-facebook').Strategy;
 
 var app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
+app.use(session({ secret: 'SECRET' }));
+app.use(passport.initialize());
+app.use(passport.session());
+
 
 app.use(express.static(path.join(__dirname,"../app")));
 
+passport.use(new FacebookStrategy({
+        clientID: '559105414283188',
+        clientSecret: '2bfd1e271df4c63f8788d588ef17b43f',
+        callbackURL: "http://localhost:7777/auth/facebook/callback"
+    },
+    function(accessToken, refreshToken, profile, done) {
+        console.log('profile ' + profile.id);
+        done(null, profile.id);
+    }
+));
+
+passport.serializeUser(function(user, done) {
+  done(null, user); 
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
+app.get('/auth/facebook', passport.authenticate('facebook'));
+
+app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', { 
+        successRedirect: '/login/success',
+        failureRedirect: '/login' 
+}));
+
 var router = express.Router();
+router.use(ensureAuthenticatedAPI);
 
 router.route('/projects')
 
@@ -171,20 +209,30 @@ router.route('/issues')
     // get all the issues (accessed at GET /api/issues)
     .get(function(req, res) {
         res.json(comments.filter(function(c){ return c.type == 'issue'}));
-    });
+    });  
 
 app.use('/api', router);
 
-app.get("/projects/*",function(req,res,next){
+app.get("/projects/*", ensureAuthenticated, function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
 });
-app.get("/tasks/*",function(req,res,next){
+app.get("/tasks/*", ensureAuthenticated, function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
 });
-app.get("/login",function(req,res,next){
+app.get("/login/*",function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
-});
+}); 
 
 app.listen(7777,function(){
     console.log("Started listening on port", 7777);
 });
+
+function ensureAuthenticatedAPI(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+    res.json({authenticated: false});
+}
+
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) { return next(); }
+    res.redirect('/login/')
+}

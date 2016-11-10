@@ -3,40 +3,44 @@ var Link = require('react-router').Link;
 var request = require('superagent');
 
 var Detail = React.createClass({
-	searchForAddress(term){
-		alert(term); 
-	},
-	onClick(term) {
-		window.location.replace('/index.html');
-	},
-    getInitialState: function() {
-    return { projects: {} };
+	getInitialState() {
+    return { project: {}, milestones: [] };
+  },
+  loadMilestones() {
+      request.get('/api/projects/' + this.props.params.project_id + '/milestones').end(function(err, res) {
+        that.setState({ project: this.state.project, milestones: res.body  });
+      })
+  },
+  openMilestone(id) {
+      browserHistory.push("/projects/" + this.props.params.project_id + '/milestones/' + id);
   },
 	componentDidMount() {
 		var that = this;
 
 		request.get('/api/projects/' + this.props.params.project_id).end(function(err, res) {
-			that.setState({ projects: res.body[0] });
+			that.setState({ project: res.body[0], milestones: [] });
+      loadMilestones();
 		});
 	},
 	render() {
     return (
       <div>
-        <h1>Details!</h1>
-        <p><Link to={'/index.html/'}>Home</Link></p>
-        <p><Link to={'/projects'}>Projects</Link></p>
-        <div><p><Link to={'/projects/edit/' + this.props.params.project_id}>Bearbeiten</Link></p></div>
-        <label className="form-group row">Projekt</label>
+        <h1>Project "{this.state.project.title}"</h1>
+        <div><p><Link className="btn btn-default" to={'/projects/edit/' + this.props.params.project_id}>Edit</Link></p></div>
+        <label className="form-group row">Title</label>
         <div className="form-group row">
-          <p class="form-control-static">{this.state.projects.title}</p>
+          <p class="form-control-static">{this.state.project.title}</p>
         </div>
-        <label className="form-group row">Meilensteine</label>
+        <label className="form-group row">Description</label>
         <div className="form-group row">
-          <p class="form-control-static">Meilenstein1</p>
+          <p class="form-control-static">{this.state.project.description}</p>
         </div>
-        <label className="form-group row">Beschreibung</label>
+        <label className="form-group row">Milestones</label>
         <div className="form-group row">
-          <p class="form-control-static">{this.state.projects.description}</p>
+          <div><p><Link className="btn btn-default" to={'/projects/' + this.props.params.project_id + '/milestones/create'}>Create new milestone</Link></p></div>
+          {this.state.milestones.map(m =>
+					  <Milestone description={m.description} from={m.from} to={m.to} onClick={this.openMilestone}/> 
+			  	)}
         </div>
       </div>
     );

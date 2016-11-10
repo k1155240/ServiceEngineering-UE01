@@ -12,10 +12,13 @@ var Home = React.createClass({
 		return (
 			<div>
 				<h1>Dashboard</h1>
-				<p><Link to={'/projects/'}>Projects</Link></p>
-				<p><Link to={'/tasks/'}>Tasks</Link></p>
-				<p><Link to={'/problems/'}>Problems</Link></p>			
-				<Search onSearch={this.searchForAddress} />
+				<p><Link className="btn btn-primary btn-lg btn-block" to={'/projects/'}>Projects</Link></p>
+				<p><Link className="btn btn-primary btn-lg btn-block" to={'/tasks/'}>Tasks</Link></p>
+				<p><Link className="btn btn-primary btn-lg btn-block" to={'/problems/'}>Problems</Link></p>
+
+				<div>
+					<h2>My tasks</h2>
+				</div>
 			</div>
 		);
 	}

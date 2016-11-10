@@ -15,8 +15,7 @@ var Tasks = React.createClass({
 		return (
 			<div>
 				<h1>Tasks</h1>
-				<p><Link to={'/'}>Home</Link></p>
-				<p><button onClick={this.TaskCreate}>Create Task</button></p>
+				<p><button  className="btn btn-default"  onClick={this.TaskCreate}>Create new task</button></p>
 				<TaskList onClick={this.TaskDetail} />
 			</div>
 		);
