@@ -7,7 +7,7 @@ var Layout = React.createClass({
                 <div className="navbar navbar-default">
                     <div className="container-fluid">
                         <div className="navbar-header">
-                            <a className="navbar-brand" href="#">Projectmanagement</a>
+                            <a className="navbar-brand" href="/">Projectmanagement</a>
                         </div>
                     </div>
                 </div>

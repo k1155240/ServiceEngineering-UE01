@@ -21,7 +21,10 @@ router.route('/projects')
         if (id) {
             Mongo.updateProject(id, req.body.title, req.body.description);
         } else{
-            Mongo.insertProject(req.body.title, req.body.description);
+            Mongo.insertProject(req.body.title, req.body.description, function(id){
+                console.log(id);
+                res.json({id: id});
+            });
         }    
     }) 
     // get all the projects (accessed at GET /api/projects)
@@ -40,7 +43,6 @@ router.route('/projects/:project_id')
         Mongo.findProject(req.params.project_id, function(items) {
            res.json(items);
         });
-        
     });
 
 router.route('/projects/:project_id/milestones')
@@ -51,7 +53,6 @@ router.route('/projects/:project_id/milestones')
         Mongo.findMilestoneByProjectId(req.params.project_id, function(items) {
             res.json(items);
          });
-
     })
 
     .post(function(req, res) {
@@ -59,8 +60,9 @@ router.route('/projects/:project_id/milestones')
         if (id) {
             Mongo.updateMilestone(id, req.body.from, req.body.to, req.body.description, req.params.project_id);
         } else{
-            Mongo.insertMilestone(req.body.from, req.body.to, req.body.description, req.params.project_id);
-
+            Mongo.insertMilestone(req.body.from, req.body.to, req.body.description, req.params.project_id, function(id){
+                res.json({id: id});
+            });
         }           
     })
     
@@ -80,12 +82,13 @@ router.route('/tasks')
         
         var id = req.body.id;
         if (id) {
-            Mongo.updateTask(id, req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.milestones, req.body.users);
+            Mongo.updateTask(id, req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.milestone, req.body.user, null, null);
             
         } else{
-            Mongo.insertTask(req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.milestones, req.body.users);
-        }
-        
+            Mongo.insertTask(req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.milestone, req.body.user, null, null, function(id){
+                res.json({id: id});
+            });
+        } 
     })
 
     // get all the tasks (accessed at GET /api/tasks)
@@ -117,7 +120,7 @@ router.route('/tasks/:task_id/comments')
             
         } else{
             Mongo.insertComment(req.body.text, req.body.userId, req.body.taskId, req.body.problems, req.body.solution, function(id){
-                res.json(id);
+                res.json({id: id});
             });
             
         }
@@ -166,9 +169,15 @@ router.route('/issues')
 
 app.use('/api', router);
 
-app.get("/projects",function(req,res,next){
+app.get("/projects/*",function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
-})
+});
+app.get("/tasks/*",function(req,res,next){
+  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+});
+app.get("/login",function(req,res,next){
+  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+});
 
 app.listen(7777,function(){
     console.log("Started listening on port", 7777);

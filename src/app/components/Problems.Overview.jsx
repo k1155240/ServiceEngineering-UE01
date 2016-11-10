@@ -1,7 +1,7 @@
 var React = require('react');
 var Link = require('react-router').Link;
 var browserHistory = require('react-router').browserHistory;
-var ProblemList = require('./ProblemList.jsx');
+var ProblemList = require('./Problems.List.jsx');
 
 var ProblemOverview = React.createClass({
 	ProblemCreate(event) {

@@ -1,7 +1,7 @@
 var React = require('react');
 var request = require('superagent');
 
-var Milestone = require('./Milestone.jsx');
+var Milestone = require('./Milestones.ListItem.jsx');
 
 var MilestoneList = React.createClass({
 	getInitialState() {

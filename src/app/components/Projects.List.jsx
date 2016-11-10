@@ -1,7 +1,7 @@
 var React = require('react');
 var request = require('superagent');
 
-var Project = require('./Project.jsx');
+var Project = require('./Projects.ListItem.jsx');
 
 var ProjectList = React.createClass({
 	click(id) {

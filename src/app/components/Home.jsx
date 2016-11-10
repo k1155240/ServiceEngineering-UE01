@@ -13,9 +13,8 @@ var Home = React.createClass({
 			<div>
 				<h1>Dashboard</h1>
 				<p><Link to={'/projects/'}>Projects</Link></p>
-				<p><Link to={'/milestones/'}>Milestones</Link></p>
 				<p><Link to={'/tasks/'}>Tasks</Link></p>
-				<p><Link to={'/problemOverview/'}>Problems</Link></p>			
+				<p><Link to={'/problems/'}>Problems</Link></p>			
 				<Search onSearch={this.searchForAddress} />
 			</div>
 		);

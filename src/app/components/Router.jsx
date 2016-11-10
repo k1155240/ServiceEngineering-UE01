@@ -7,22 +7,27 @@ var browserHistory = require('react-router').browserHistory;
 
 var Layout = require('./Layout.jsx');
 var Home = require('./Home.jsx');
+
 var Projects = require('./Projects.jsx');
+var CreateProject = require('./Projects.Create.jsx');
+var EditProject = require('./Projects.Edit.jsx');
+var Detail = require('./Projects.Detail.jsx');
+
 var Milestones = require('./Milestones.jsx');
 var Tasks = require('./Tasks.jsx');
-var TaskCreateTask = require('./TaskCreateTask.jsx');
-var TaskDetail = require('./TaskDetail.jsx');
-var TaskEdit = require('./TaskEdit.jsx');
-var Detail = require('./Detail.jsx');
-var CreateProject = require('./CreateProject.jsx');
+var TaskCreateTask = require('./Tasks.CreateTask.jsx');
+var TaskDetail = require('./Tasks.Detail.jsx');
+var TaskEdit = require('./Tasks.Edit.jsx');
 
-var ProblemOverview = require('./ProblemOverview.jsx');
-var ProblemCreate = require('./ProblemCreate.jsx');
-var ProblemDetail = require('./ProblemDetail.jsx');
 
-var MilestonesCreate = require('./MilestonesCreate.jsx');
-var MilestoneDetail = require('./MilestoneDetail.jsx');
-var MilestoneEdit = require('./MilestoneEdit.jsx');
+
+var ProblemOverview = require('./Problems.Overview.jsx');
+var ProblemCreate = require('./Problems.Create.jsx');
+var ProblemDetail = require('./Problems.Detail.jsx');
+
+var MilestonesCreate = require('./Milestones.Create.jsx');
+var MilestoneDetail = require('./Milestones.Detail.jsx');
+var MilestoneEdit = require('./Milestones.Edit.jsx');
 
 var router = React.createClass({
     render(){
@@ -31,22 +36,26 @@ var router = React.createClass({
                 <Route path="/" component={Layout}>
                     <IndexRoute component={Home} />
                     <Route path="/index.html" component={Home}>/></Route>
-                    <Route path="projects" component={Projects}></Route>
-                    <Route path="milestones" component={Milestones}></Route>
-                    <Route path="tasks" component={Tasks}></Route>
-                    <Route path="taskcreatetask" component={TaskCreateTask}></Route>
-                    <Route path="taskdetail" component={TaskDetail}></Route>
-                    <Route path="taskedit" component={TaskEdit}></Route>
-					<Route path="detail/:project_id" component={Detail}></Route>
-                    <Route path="createProject" component={CreateProject}></Route>
-                    
-                    <Route path="problemOverview" component={ProblemOverview}></Route>
-                    <Route path="problemCreate" component={ProblemCreate}></Route>
-                    <Route path="problemDetail" component={ProblemDetail}></Route>
 
-                    <Route path="milestonescreate" component={MilestonesCreate}></Route>
-                    <Route path="milestonedetail" component={MilestoneDetail}></Route>
-                    <Route path="milestoneedit" component={MilestoneEdit}></Route>
+                    <Route path="projects" component={Projects}></Route>
+                    <Route path="projects/create/" component={CreateProject}></Route>
+                    <Route path="projects/edit/:project_id" component={EditProject}></Route>
+                    <Route path="projects/:project_id" component={Detail}></Route>
+
+                    <Route path="projects/:project_id/milestones" component={Milestones}></Route>
+                    <Route path="projects/:project_id/milestones/create" component={MilestonesCreate}></Route>
+                    <Route path="projects/:project_id/milestones/:milestone_id" component={MilestoneDetail}></Route>
+                    <Route path="projects/:project_id/milestones/:milestone_id/edit" component={MilestoneEdit}></Route>
+
+                    <Route path="tasks" component={Tasks}></Route>
+                    <Route path="tasks/create" component={TaskCreateTask}></Route>
+                    <Route path="tasks/:task_id" component={TaskDetail}></Route>
+                    <Route path="tasks/:task_id/edit" component={TaskEdit}></Route>
+					
+
+                    <Route path="tasks/:task_id/problems" component={ProblemOverview}></Route>
+                    <Route path="tasks/:task_id/problems/create" component={ProblemCreate}></Route>
+                    <Route path="tasks/:task_id/problems/:problem_id" component={ProblemDetail}></Route>
                 </Route>
             </Router>
 		);

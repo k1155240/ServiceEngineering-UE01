@@ -1,7 +1,7 @@
 var React = require('react');
 var request = require('superagent');
 
-var Problem = require('./Problem.jsx');
+var Problem = require('./Problems.ListItem.jsx');
 
 var ProblemList = React.createClass({
 	getInitialState() {

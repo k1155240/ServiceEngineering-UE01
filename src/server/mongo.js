@@ -7,8 +7,6 @@ var MongoClient = mongodb.MongoClient;
 // Connection URL
 var url = 'mongodb://localhost:27017/projectmanagement';
 
-
-
 exports.insertUser = function(in_firstname, in_lastname, in_email, in_facebookID, in_tasks, callback) {
     MongoClient.connect(url, function (err, db) {
         if (err) {
@@ -25,7 +23,7 @@ exports.insertUser = function(in_firstname, in_lastname, in_email, in_facebookID
                     console.log(err);
                 } else {
                     console.log('Inserted %d documents into the "users" collection. The documents inserted with "_id" are:', result.length, result);
-                    callback(result._id);
+                    callback(user._id);
         }
 
             db.close();
@@ -272,15 +270,14 @@ exports.insertProject = function (in_title, in_description, callback){
             console.log('Connection established to', url);
 
             var collection = db.collection('projects');    
-            var project = {title: in_title, description: in_descprition};
-
+            var project = {title: in_title, description: in_description};
 
             collection.insert(project, function (err, result) {
                 if (err) {
                     console.log(err);
                 } else {
                     console.log('Inserted %d documents into the "projects" collection. The documents inserted with "_id" are:', result.length, result);
-                    callback(result._id);
+                    callback(project._id);
                 }
 
             db.close();
@@ -395,7 +392,7 @@ exports.insertTask = function (in_title, in_description, in_state, in_from, in_t
                     console.log(err);
                 } else {
                     console.log('Inserted %d documents into the "tasks" collection. The documents inserted with "_id" are:', result.length, result);
-                    callback(result._id);
+                    callback(task._id);
             }
 
             db.close();

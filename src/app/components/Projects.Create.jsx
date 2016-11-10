@@ -1,15 +1,17 @@
 var React = require('react');
 var request = require('superagent');
 var Link = require('react-router').Link;
+var browserHistory = require('react-router').browserHistory;
 
 var CreateProject = React.createClass({
   sendToDb() {
     request
-    .post('/api/createProject/')
+    .post('/api/projects/')
     .send({title: document.getElementById("title").value,
            description: document.getElementById("description").value})
     .set('Accept', 'application/json')  
-    .end(function(err, res) {	      
+    .end(function(err, res) {
+        browserHistory.push("/projects/" + res.body.id);
     });
   },
   render() {
@@ -26,4 +28,4 @@ var CreateProject = React.createClass({
   }
 });
 
-module.exports = CreateProject;
+module.exports = CreateProject; 

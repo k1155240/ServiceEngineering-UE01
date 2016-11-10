@@ -1,6 +1,6 @@
 var React = require('react');
 var Link = require('react-router').Link;
-var MilestoneList = require('./MilestoneList.jsx');
+var MilestoneList = require('./Milestones.List.jsx');
 var browserHistory = require('react-router').browserHistory;
 
 var Milestones = React.createClass({
