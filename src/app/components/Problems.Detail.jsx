@@ -1,6 +1,7 @@
 var React = require('react');
 var Link = require('react-router').Link;
 var request = require('superagent');
+var updateRequest = require('superagent');
 
 var ProblemDetail = React.createClass({
 	getInitialState() {
@@ -19,10 +20,10 @@ var ProblemDetail = React.createClass({
 		alert(this.state.comments.state);
   	},
 
-	closeProblem(event) {
+	closeProblem() {
 		if (this.state.comments.type == "Problem" && this.state.comments.state == "Open") {
-			request
-			.post('/api/updateComment/')
+			updateRequest
+			.post('/api/createComment/')
 			.send({id: this.props.params.comment_id, 
 				   user: document.getElementById("user").value,
 				   task: document.getElementById("task").value,
@@ -32,7 +33,7 @@ var ProblemDetail = React.createClass({
 			.set('Accept', 'application/json')  
 			.end(function(err, res) {      
 			});
-			alert("Problem was successfully closed!")
+			alert("Problem was successfully updated!")
 		} else {
 			alert("Problem was already closed!")
 		}

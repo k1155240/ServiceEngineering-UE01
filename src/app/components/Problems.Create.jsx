@@ -1,5 +1,6 @@
 var React = require('react');
 var request = require('superagent');
+var browserHistory = require('react-router').browserHistory;
 var Link = require('react-router').Link;
 
 var ProblemCreate = React.createClass({
@@ -15,6 +16,7 @@ var ProblemCreate = React.createClass({
     .end(function(err, res) {	      
     });
     alert("Problem successfully created!")
+    browserHistory.push("/problemOverview");
   },
   render() {
     return (
