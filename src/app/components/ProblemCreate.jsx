@@ -14,6 +14,7 @@ var ProblemCreate = React.createClass({
     .set('Accept', 'application/json')  
     .end(function(err, res) {	      
     });
+    alert("Problem successfully created!")
   },
   render() {
     return (
