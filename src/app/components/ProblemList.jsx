@@ -14,6 +14,11 @@ var ProblemList = React.createClass({
 			that.setState({ problems: res.body });
 		});
 	},
+
+	click(id) {
+		this.props.onClick(id);
+	},
+
 	render(){
 		var self = this;
 
@@ -21,7 +26,7 @@ var ProblemList = React.createClass({
 			<div className="list-group col-xs-12 col-md-6 col-md-offset-3">
 				<span className="list-group-item active">Problem</span>
 				{this.state.problems.map(t =>
-					<Problem user={t.user} task={t.task} type={t.type} text={t.text} state={t.state} onClick={self.props.onClick}/>
+					<Problem id={t._id} user={t.user} task={t.task} type={t.type} text={t.text} state={t.state} onClick={self.click}/>
 				)}
 			</div>
 		)
