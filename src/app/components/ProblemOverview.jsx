@@ -7,8 +7,8 @@ var ProblemOverview = React.createClass({
 	ProblemCreate(event) {
 		browserHistory.push("/problemCreate");
 	},
-	ProblemDetail(event) {
-		browserHistory.push("/problemDetail");
+	ProblemDetail(id) {
+		browserHistory.push("/problemDetail/" + id);
 	},
 	render(){
 		return (
