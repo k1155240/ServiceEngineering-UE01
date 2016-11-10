@@ -153,7 +153,12 @@ router.route('/comments/:comment_id')
 router.route('/createComment')
 	// post comment to db
 	.post(function(req, res) {
-        console.log(Mongo.insertComment(req.body.user, req.body.task, req.body.type, req.body.text, req.body.state));
+        var id = req.body.id;
+        if (id) {
+            Mongo.updateComment(id, req.body.user, req.body.task, req.body.type, req.body.text, req.body.state); 
+        } else {
+            Mongo.insertComment(req.body.user, req.body.task, req.body.type, req.body.text, req.body.state);
+        }
     })
 
 // UPDATE COMMENT    	
@@ -161,14 +166,7 @@ router.route('/updateComment/')
 	// post comment to db
 	.post(function(req, res) {
         console.log(Mongo.updateComment(req.body.id, req.body.user, req.body.task, req.body.type, req.body.text, req.body.state));
-    })    
-
-router.route('/issues')
-
-    // get all the issues (accessed at GET /api/issues)
-    .get(function(req, res) {
-        res.json(comments.filter(function(c){ return c.type == 'issue'}));
-    });
+    })
 
 app.use('/api', router);
 
