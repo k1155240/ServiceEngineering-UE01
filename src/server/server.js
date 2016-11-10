@@ -133,32 +133,38 @@ router.route('/tasks/:task_id/comments')
         });
     });
 
+// ---------------------------------------------------------------------------------------
+// ALL COMMENTS
 router.route('/comments')
-
-    // get the task with that id (accessed at GET /api/tasks/:task_id)
+    // get all comments (accessed at GET /api/comments)
     .get(function(req, res) {
-        // res.json(comments.filter(function(c){ return c.taskId == req.params.task_id})); 
          Mongo.findAllComments(function(items) {
            res.json(items);
         });
     });
 
-    	
+// COMMENT WITH ID
+router.route('/comments/:comment_id')
+    // get the comment with that id (accessed at GET /api/comments/:comment_id)
+    .get(function(req, res) {
+         Mongo.findComment(req.params.comment_id, function(items) {
+           res.json(items);
+        });
+    });
+
+// CREATE COMMENT    	
 router.route('/createComment')
 	// post comment to db
 	.post(function(req, res) {
-        
-        var id = req.body.id;
-        if (id) {
-            Mongo.updateComment(id, req.body.user, req.body.task, req.body.type, req.body.text, req.body.state);
-            
-        } else{
-            console.log('serverlog');
-            console.log(Mongo.insertComment(req.body.user, req.body.task, req.body.type, req.body.text, req.body.state));
-        }
-        
-        //TODO: ID zurück geben
+        console.log(Mongo.insertComment(req.body.user, req.body.task, req.body.type, req.body.text, req.body.state));
     })
+
+// UPDATE COMMENT    	
+router.route('/updateComment/')
+	// post comment to db
+	.post(function(req, res) {
+        console.log(Mongo.updateComment(req.body.id, req.body.user, req.body.task, req.body.type, req.body.text, req.body.state));
+    })    
 
 router.route('/issues')
 
