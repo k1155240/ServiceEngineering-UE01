@@ -519,7 +519,7 @@ exports.removeTasks = function(in_id) {
 
 // --------------------------------------------------------------------------------------------------------------
 
-exports.insertComment = function (in_type, in_text, in_user, in_task, in_problem, in_solution, callback){
+exports.insertComment = function (in_user, in_task, in_type, in_text, in_state){
     MongoClient.connect(url, function (err, db) {
         if (err) {
             console.log('Unable to connect to the mongoDB server. Error:', err);
@@ -527,16 +527,15 @@ exports.insertComment = function (in_type, in_text, in_user, in_task, in_problem
             console.log('Connection established to', url);
 
             var collection = db.collection('comments');    
-            var comment = {type: in_type, text: in_text, user: in_user, task: in_task, problem: in_problem, solution: in_solution};
-            var id;
+            var comment = {user: in_user, task: in_task, type: in_type, text: in_text, state: in_state};
+
 
             collection.insert(comment, function (err, result) {
                 if (err) {
                     console.log(err);
                 } else {
                     console.log('Inserted %d documents into the "comments" collection. The documents inserted with "_id" are:', result.length, result);
-                    callback(result._id);
-            }
+                }
 
             db.close();
             });
@@ -562,37 +561,7 @@ exports.findComment = function(in_id, callback) {
     });
 };
 
-exports.updateComment = function (in_id, in_type, in_text, in_user, in_task, in_problem, in_solution) {
-    
-    MongoClient.connect(url, function (err, db) {
-        if (err) {
-            console.log('Unable to connect to the mongoDB server. Error:', err);
-        } else {
-            console.log('Connection established to', url);
-
-            var collection = db.collection('comments');    
-
-            collection.update(
-            { '_id' : new mongodb.ObjectID(in_id) }, 
-                            { $set: { 
-                            'type': in_type,
-                            'text': in_text,
-                            'user': in_user,
-                            'task':in_task,
-                            'problem':in_problem,
-                            'solution':in_solution
-                            } },
-            function (err, result) {
-                if (err) throw err;
-                console.log(result);
-            });
-
-            db.close();
-            
-        }
-    });
-};
-
+//all comments
 exports.findAllComments = function(callback) {
 
     MongoClient.connect(url, function (err, db) {
@@ -608,7 +577,37 @@ exports.findAllComments = function(callback) {
                 callback(result);
             })
             db.close();
-         }
+        }
+    });
+};
+
+exports.updateComment = function (in_id, in_user, in_task, in_type, in_text, in_state) {
+    
+    MongoClient.connect(url, function (err, db) {
+        if (err) {
+            console.log('Unable to connect to the mongoDB server. Error:', err);
+        } else {
+            console.log('Connection established to', url);
+
+            var collection = db.collection('comments');    
+
+            collection.update(
+            { '_id' : new mongodb.ObjectID(in_id) }, 
+                            { $set: { 
+                            'user': in_user,
+                            'task': in_task,
+							'type': in_type,
+                            'text': in_text,
+                            'state': in_state
+                            } },
+            function (err, result) {
+                if (err) throw err;
+                console.log(result);
+            });
+
+            db.close();
+            
+        }
     });
 };
 
