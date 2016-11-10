@@ -42,7 +42,7 @@ var router = React.createClass({
                     
                     <Route path="problemOverview" component={ProblemOverview}></Route>
                     <Route path="problemCreate" component={ProblemCreate}></Route>
-                    <Route path="problemDetail" component={ProblemDetail}></Route>
+                    <Route path="problemDetail/:comment_id" component={ProblemDetail}></Route>
 
                     <Route path="milestonescreate" component={MilestonesCreate}></Route>
                     <Route path="milestonedetail" component={MilestoneDetail}></Route>
