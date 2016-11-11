@@ -18,9 +18,6 @@ app.use(session({ secret: 'SECRET' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-app.use(express.static(path.join(__dirname,"../app")));
-
 passport.use(new FacebookStrategy({
         clientID: '559105414283188',
         clientSecret: '2bfd1e271df4c63f8788d588ef17b43f',
@@ -28,7 +25,16 @@ passport.use(new FacebookStrategy({
     },
     function(accessToken, refreshToken, profile, done) {
         console.log('profile ' + profile.id);
-        done(null, profile.id);
+        Mongo.findUserByFb(profile.id, function(users){
+            if(users.length > 0) {
+                done(null, profile.id);
+            }
+            else {
+                Mongo.insertUser('', profile.displayName, '', profile.id, function(id) {
+                    done(null, profile.id);
+                });
+            }
+        });
     }
 ));
 
@@ -51,13 +57,24 @@ app.get('/auth/facebook/callback',
 var router = express.Router();
 router.use(ensureAuthenticatedAPI);
 
+router.route('/users')
+
+    // get all the users (accessed at GET /api/users)
+    .get(function(req, res) {
+        Mongo.findAllUsers(function(users) {
+           res.json(users);
+        });
+    });
+
 router.route('/projects')
 
     // create a project (accessed at POST /api/projects)
     .post(function(req, res) {
         var id = req.body.id;
         if (id) {
-            Mongo.updateProject(id, req.body.title, req.body.description);
+            Mongo.updateProject(id, req.body.title, req.body.description, function(){
+                res.json({success: true});
+            });
         } else{
             Mongo.insertProject(req.body.title, req.body.description, function(id){
                 console.log(id);
@@ -96,9 +113,11 @@ router.route('/projects/:project_id/milestones')
     .post(function(req, res) {
         var id = req.body.id;
         if (id) {
-            Mongo.updateMilestone(id, req.body.from, req.body.to, req.body.description, req.params.project_id);
+            Mongo.updateMilestone(id, req.body.to, req.body.description, req.params.project_id, function(){
+                res.json({success: true});
+            });
         } else{
-            Mongo.insertMilestone(req.body.from, req.body.to, req.body.description, req.params.project_id, function(id){
+            Mongo.insertMilestone(req.body.to, req.body.description, req.params.project_id, function(id){
                 res.json({id: id});
             });
         }           
@@ -108,6 +127,15 @@ router.route('/projects/:project_id/milestones')
         Mongo.removeMilestone(req.body.id);
     });
 
+router.route('/milestones/:milestone_id')
+
+    // get the milestones of the project (accessed at GET /api/projects/:project_id/milestones)
+    .get(function(req, res) {
+        // res.json(milestones.filter(function(m){ return m.projectId == req.params.project_id})); 
+        Mongo.findMilestone(req.params.milestone_id, function(items) {
+            res.json(items);
+         });
+    });
 
 router.route('/tasks')
 
@@ -160,9 +188,7 @@ router.route('/tasks/:task_id/comments')
             Mongo.insertComment(req.body.text, req.body.userId, req.body.taskId, req.body.problems, req.body.solution, function(id){
                 res.json({id: id});
             });
-            
         }
-        
     })
     .get(function(req, res) {
         // res.json(comments.filter(function(c){ return c.taskId == req.params.task_id})); 
@@ -221,6 +247,14 @@ app.get("/tasks/*", ensureAuthenticated, function(req,res,next){
 app.get("/login/*",function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
 }); 
+app.get("/",ensureAuthenticated,function(req,res,next){
+  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+}); 
+app.get("/index.html",ensureAuthenticated,function(req,res,next){
+  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+}); 
+
+app.use(express.static(path.join(__dirname,"../app")));
 
 app.listen(7777,function(){
     console.log("Started listening on port", 7777);
@@ -228,10 +262,12 @@ app.listen(7777,function(){
 
 function ensureAuthenticatedAPI(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-    res.json({authenticated: false});
+   return next();
+    //res.json({authenticated: false});
 }
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-    res.redirect('/login/')
+   return next();
+    //res.redirect('/login/')
 }

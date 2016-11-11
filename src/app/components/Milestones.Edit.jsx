@@ -1,47 +1,63 @@
 var React = require('react');
-
+var request = require('superagent');
+var Link = require('react-router').Link;
+var browserHistory = require('react-router').browserHistory;
 
 var MilestoneEdit = React.createClass({
-	render(){
+    getInitialState() {
+    return { milestone: {}};
+  },
+
+	componentDidMount() {
+		var that = this;
+
+		request.get('/api/milestones/' + this.props.params.milestone_id).end(function(err, res) {
+			that.setState({ milestone: res.body[0]});
+		});
+	},
+ sendToDb() {
+     var that = this;
+    request
+    .post('/api/projects/' + this.props.params.project_id + '/milestones/')
+    .send({id: that.state.milestone._id,
+        to: document.getElementById("to").value,
+        description: document.getElementById("description").value,
+    })
+    .set('Accept', 'application/json')  
+    .end(function(err, res) {
+        browserHistory.push("/projects/" + that.props.params.project_id);
+    });
+  },
+  handleChangeTo(event) {
+        var milestone = this.state.milestone;
+        milestone.to = event.target.value;
+        this.setState({ milestone: milestone});
+    },
+    handleChangeDescription(event) {
+        var milestone = this.state.milestone;
+        milestone.description = event.target.value;
+        this.setState({ milestone: milestone});
+    },
+render(){
 		 return (
-			<div>
+			<div> 
             <div>
-				<h1>Überschrift des Projektes</h1>
+				<h1>Edit milestone</h1>
+            </div>
+           
+            <div className="form-group row">
+                <label htmlFor="description">Description</label>
+                <input type="text" className="form-control"  id="description" name="description" placeholder="Description" value={this.state.milestone.description} onChange={this.handleChangeDescription}/>
             </div>
             <div className="form-group row">
-                <label for="Task1">Meilenstein</label>
-                <input type="text" className="form-control"  id="M1" placeholder="Meilenstein1"/>
+                <label htmlFor="to">Due date</label>
+                <input type="text" className="form-control" id="to" name="description" placeholder="YYYY-MM-DD" value={this.state.milestone.to} onChange={this.handleChangeTo}/>
             </div>
-            <div className="form-group row">
-                <label for="Task2">Beschreibung des Meilensteins</label>
-                <textarea className="form-control" rows="6" id="M2" placeholder="Beschreibung"/>
-            </div>
-            <div className="form-group row">
-                <label for="Task3">Meilenstein beginnt am</label>
-                <input type="text" className="form-control" id="M3" placeholder="DDMMJJJJ"/>
-            </div>
-            <div className="form-group row">
-                <label for="Task3">Meilenstein endet am</label>
-                <input type="text" className="form-control" id="M4" placeholder="DDMMJJJ"/>
-            </div>
-            <table className="table table-hover">
-				<tbody>
-					<tr>
-						<th>Aufgaben</th>
-						<th>Beginn</th>
-						<th>Ende</th>
-					</tr>
-					<tr>
-						<td>ihfoir</td>
-						<td>lkfhgldk</td>
-						<td>lkxhvl</td>
-					</tr>
-					</tbody>
-				</table>
-            <button type="submit" className="button">Meilenstein ändern</button>
+            
+            <p><button className="btn btn-primary" onClick={this.sendToDb}>Submit</button></p>
         </div>
 		)
-	}
+	} 
 });
 
 module.exports = MilestoneEdit;

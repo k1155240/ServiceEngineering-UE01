@@ -1,14 +1,18 @@
 var React = require('react');
 var Link = require('react-router').Link;
 var request = require('superagent');
+var browserHistory = require('react-router').browserHistory;
+
+var Milestone = require('./Milestones.ListItem.jsx');
 
 var Detail = React.createClass({
 	getInitialState() {
     return { project: {}, milestones: [] };
   },
   loadMilestones() {
+		var that = this;
       request.get('/api/projects/' + this.props.params.project_id + '/milestones').end(function(err, res) {
-        that.setState({ project: this.state.project, milestones: res.body  });
+        that.setState({ project: that.state.project, milestones: res.body  });
       })
   },
   openMilestone(id) {
@@ -19,7 +23,7 @@ var Detail = React.createClass({
 
 		request.get('/api/projects/' + this.props.params.project_id).end(function(err, res) {
 			that.setState({ project: res.body[0], milestones: [] });
-      loadMilestones();
+      that.loadMilestones();
 		});
 	},
 	render() {
@@ -29,18 +33,21 @@ var Detail = React.createClass({
         <div><p><Link className="btn btn-default" to={'/projects/edit/' + this.props.params.project_id}>Edit</Link></p></div>
         <label className="form-group row">Title</label>
         <div className="form-group row">
-          <p class="form-control-static">{this.state.project.title}</p>
+          <p className="form-control-static">{this.state.project.title}</p>
         </div>
         <label className="form-group row">Description</label>
         <div className="form-group row">
-          <p class="form-control-static">{this.state.project.description}</p>
+          <p className="form-control-static">{this.state.project.description}</p>
         </div>
         <label className="form-group row">Milestones</label>
         <div className="form-group row">
           <div><p><Link className="btn btn-default" to={'/projects/' + this.props.params.project_id + '/milestones/create'}>Create new milestone</Link></p></div>
-          {this.state.milestones.map(m =>
-					  <Milestone description={m.description} from={m.from} to={m.to} onClick={this.openMilestone}/> 
-			  	)}
+          <div className="list-group col-xs-12 col-md-6 col-md-offset-3">
+            <span className="list-group-item active">Milestones</span>
+            {this.state.milestones.map(m =>
+              <Milestone description={m.description} from={m.from} to={m.to} id={m._id} onClick={this.openMilestone}/> 
+            )}
+            </div>
         </div>
       </div>
     );

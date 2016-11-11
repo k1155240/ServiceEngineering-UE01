@@ -16,7 +16,6 @@ var CreateProject = require('./Projects.Create.jsx');
 var EditProject = require('./Projects.Edit.jsx');
 var Detail = require('./Projects.Detail.jsx');
 
-var Milestones = require('./Milestones.jsx');
 var Tasks = require('./Tasks.jsx');
 var TaskCreateTask = require('./Tasks.CreateTask.jsx');
 var TaskDetail = require('./Tasks.Detail.jsx');
@@ -56,7 +55,6 @@ var router = React.createClass({
                     <Route path="projects/edit/:project_id" component={EditProject} onEnter={requireAuth}></Route>
                     <Route path="projects/:project_id" component={Detail} onEnter={requireAuth}></Route>
 
-                    <Route path="projects/:project_id/milestones" component={Milestones} onEnter={requireAuth}></Route>
                     <Route path="projects/:project_id/milestones/create" component={MilestonesCreate} onEnter={requireAuth}></Route>
                     <Route path="projects/:project_id/milestones/:milestone_id" component={MilestoneDetail} onEnter={requireAuth}></Route>
                     <Route path="projects/:project_id/milestones/:milestone_id/edit" component={MilestoneEdit} onEnter={requireAuth}></Route>

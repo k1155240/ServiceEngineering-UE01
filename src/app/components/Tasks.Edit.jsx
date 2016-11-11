@@ -22,7 +22,7 @@ var TaskEdit = React.createClass({
             </div>
             <div className="form-group row">
                 <label for="Task3">Aufgabe endet am</label>
-                <input type="text" className="form-control" id="Task4" placeholder="DDMMJJJ"/>
+                <input type="text" className="form-control" id="Task4" placeholder="DDMMJJJ"/> 
             </div>
             <strong>Projekt auswählen</strong>
             <select className="form-control">
