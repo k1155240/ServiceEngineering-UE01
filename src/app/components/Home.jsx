@@ -15,10 +15,6 @@ var Home = React.createClass({
 				<p><Link className="btn btn-primary btn-lg btn-block" to={'/projects/'}>Projects</Link></p>
 				<p><Link className="btn btn-primary btn-lg btn-block" to={'/tasks/'}>Tasks</Link></p>
 				<p><Link className="btn btn-primary btn-lg btn-block" to={'/problems/'}>Problems</Link></p>
-
-				<div>
-					<h2>My tasks</h2>
-				</div>
 			</div>
 		);
 	}
