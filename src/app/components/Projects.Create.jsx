@@ -18,7 +18,7 @@ var CreateProject = React.createClass({
     return (
       <div>
         <div>
-            <h1>Create new task</h1>
+            <h1>Create new project</h1>
         </div>
         <div className="form-group row"> 
             <label htmlFor="Task1">Title</label>
