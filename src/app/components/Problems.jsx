@@ -5,17 +5,16 @@ var ProblemList = require('./Problems.List.jsx');
 
 var ProblemOverview = React.createClass({
 	ProblemCreate(event) {
-		browserHistory.push("/problemCreate");
+		browserHistory.push("/problems/create");
 	},
 	ProblemDetail(id) {
-		browserHistory.push("/problemDetail/" + id);
+		browserHistory.push("/problems/" + id);
 	},
 	render(){
 		return (
 			<div>
-				<h1>Problem Overview</h1>
-				<p><Link to={'/index.html/'}>Home</Link></p>
-				<p><button onClick={this.ProblemCreate}>Create Problem</button></p>
+				<h1>Problems</h1>
+				<p>To create a problem, go the the related task!</p>
 				<ProblemList onClick={this.ProblemDetail} /> 
 			</div>
 		);

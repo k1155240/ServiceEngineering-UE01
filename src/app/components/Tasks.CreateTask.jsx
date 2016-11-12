@@ -5,28 +5,31 @@ var browserHistory = require('react-router').browserHistory;
 
 var TaskCreateTask = React.createClass({
     getInitialState() {
-        return { users: [], projects: [], milestones: [], selectedMilestoneId:'', selectedProjectId: ''};
+        return { users: [], projects: [], milestones: [], selectedMilestoneId:'', selectedProjectId: '', selectedUserId: ''};
     },
 	componentDidMount() {
 		var that = this;
 
 		request.get('/api/users/').end(function(err, res) {
-			that.setState({  projects: that.state.projects, users: res.body, milestones: that.state.milestones, selectedMilestoneId: that.state.selectedMilestoneId, selectedProjectId: that.state.selectedProjectId});
-		});
+            that.state.users = res.body;
+            that.setState(that.state);
+        });
         request.get('/api/projects/').end(function(err, res) {
-			that.setState({ projects: res.body, users: that.state.users, milestones: that.state.milestones, selectedMilestoneId: that.state.selectedMilestoneId, selectedProjectId: that.state.selectedProjectId});
-		});
+            that.state.projects = res.body;
+            that.setState(that.state);
+        });
 	},
     sendToDb() {
         request
         .post('/api/tasks/')
         .send({title: document.getElementById("title").value,
                 description: document.getElementById("description").value,
-                state: document.getElementById("state").value,
+                state: 'open',
                 from: document.getElementById("from").value,
                 to: document.getElementById("to").value,
-                project: document.getElementById("project").value,
-                milestone: document.getElementById("milestone").value
+                user: this.state.selectedUserId,
+                project: this.state.selectedProjectId,
+                milestone: this.state.selectedMilestoneId
         })
         .set('Accept', 'application/json')  
         .end(function(err, res) {
@@ -51,56 +54,56 @@ var TaskCreateTask = React.createClass({
         this.setState(this.state);
     },
 	render(){
-		 return (
+		 return ( 
 			<div>
                 <div>
                     <h1>Create new task</h1>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="Task1">Title</label>
-                    <input type="text" className="form-control"  id="title" placeholder="Title"/>
+                    <label htmlFor="title">Title</label>
+                    <input type="text" className="form-control" id="title" name="title" placeholder="Title"/>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="Task2">Description</label>
-                    <textarea className="form-control" rows="6" id="description" placeholder="Description"/>
+                    <label htmlFor="description">Description</label>
+                    <textarea className="form-control" rows="6" id="description" name="description" placeholder="Description"/>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="Task3">Start date</label>
-                    <input type="text" className="form-control" id="from" placeholder="MM-DD-JJJJ"/>
+                    <label htmlFor="from">From</label>
+                    <input type="text" className="form-control" id="from" name="from" placeholder="MM-DD-JJJJ"/>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="Task4">End date</label>
-                    <input type="text" className="form-control" id="to" name="Task4" placeholder="MM-DD-JJJ"/>
+                    <label htmlFor="to">To</label>
+                    <input type="text" className="form-control" id="to" name="to" placeholder="MM-DD-JJJ"/>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="users">Assign a user</label>
-                    <select id="users" name="users" className="form-control" value={this.state.selectedUserId} onChange={this.handleChangeUserId}>
-                        <option>Choose user</option>
+                    <label htmlFor="users">Assigned user</label>
+                    <select id="users" name="users" className="form-control"  value={this.state.selectedUserId} onChange={this.handleChangeUserId}>
+                        <option>Choose a user</option>
                         {this.state.users.map(u =>
-                            <option value={u._id}>{u.lastname}</option>
-                        )}
+                            <option key={u._id} value={u._id}>{u.lastname}</option>
+                        )} 
                     </select>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="Task5">Choose project</label>
-                    <select id="Task5" name="Task5" className="form-control" value={this.state.selectedProjectId} onChange={this.handleChangeProjectId}>
-                        <option>Choose project</option>
+                    <label htmlFor="project">Project</label>
+                    <select id="project" name="project" className="form-control" value={this.state.selectedProjectId} onChange={this.handleChangeProjectId}>
+                        <option>Choose a project</option>
                         {this.state.projects.map(p =>
-                            <option value={p._id}>{p.title}</option>
+                            <option key={p._id} value={p._id}>{p.title}</option>
                         )}
                     </select>
                 </div>
                 <div className="form-group row">
-                    <label htmlFor="Task6">Choose milestone</label>
-                    <select id="Task6" name="Task6" className="form-control" value={this.state.selectedMilestoneId} onChange={this.handleChangeMilestoneId}>
-                        <option>Choose milestone</option>
+                    <label htmlFor="milestone">Milestone</label>
+                    <select id="milestone" name="milestone" className="form-control" value={this.state.selectedMilestoneId} onChange={this.handleChangeMilestoneId}>
+                        <option>Choose a milestone</option>
                         {this.state.milestones.map(m =>
-                            <option value={m._id}>{m.description}</option>
-                        )}
+                            <option key={m._id} value={m._id}>{m.description}</option>
+                        )} 
                     </select>
                 </div>
 
-                <button className="btn btn-primary"  onClick={this.sendToDb}>Create task</button>
+                <button className="btn btn-primary" onClick={this.sendToDb}>Submit</button>
             </div>
 		)
 	}

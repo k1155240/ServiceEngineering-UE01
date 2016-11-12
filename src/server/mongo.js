@@ -40,7 +40,7 @@ exports.insertUser = function(in_firstname, in_lastname, in_email, in_facebookID
                     console.log(err);
                 } else {
                     console.log('Inserted %d documents into the "users" collection. The documents inserted with "_id" are:', result.length, result);
-                    callback(user._id);
+                    callback(user._id, user);
                 }
 
             db.close();
@@ -49,7 +49,7 @@ exports.insertUser = function(in_firstname, in_lastname, in_email, in_facebookID
     });
 };
 
-exports.findUser = function(in_id) {
+exports.findUser = function(in_id, callback) {
     MongoClient.connect(url, function (err, db) {
         if (err) {
             console.log('Unable to connect to the mongoDB server. Error:', err);
@@ -410,7 +410,7 @@ exports.removeProject = function(in_id) {
 
 // --------------------------------------------------------------------------------------------------------------
 
-exports.insertTask = function (in_title, in_description, in_state, in_from, in_to, in_milestone, in_user, in_problem, in_comment, callback){
+exports.insertTask = function (in_title, in_description, in_state, in_from, in_to, in_project, in_milestone, in_user, callback){
     MongoClient.connect(url, function (err, db) {
         if (err) {
             console.log('Unable to connect to the mongoDB server. Error:', err);
@@ -418,8 +418,16 @@ exports.insertTask = function (in_title, in_description, in_state, in_from, in_t
             console.log('Connection established to', url);
 
             var collection = db.collection('tasks');    
-            var task = {title: in_title, description: in_description, state: in_state, from: in_from, to: in_to, milestone: in_milestone, user:in_user, problem:in_problem, comment:in_comment};
-
+            var task = {
+                title: in_title, 
+                description: in_description, 
+                state: in_state, 
+                from: in_from, 
+                to: in_to, 
+                project: new mongodb.ObjectID(in_project), 
+                milestone: new mongodb.ObjectID(in_milestone), 
+                user:new mongodb.ObjectID(in_user)
+            };
 
             collection.insert(task, function (err, result) {
                 if (err) {
@@ -463,7 +471,7 @@ exports.findCommentsByTaskId = function(in_taskId, callback) {
 
             var collection = db.collection('comments');
 
-             collection.find({taskId: new mongodb.ObjectID(in_taskId)}).toArray(function (err, result) {
+             collection.find({task: new mongodb.ObjectID(in_taskId)}).toArray(function (err, result) {
                 if (err) return console.log(err)
                 callback(result);
             })
@@ -472,7 +480,7 @@ exports.findCommentsByTaskId = function(in_taskId, callback) {
     });
 };
 
-exports.updateTask = function (in_id, in_title, in_description, in_state, in_from, in_to, in_milestone, in_user, in_problem, in_comment) {
+exports.updateTask = function (in_id, in_title, in_description, in_state, in_from, in_to, in_project, in_milestone, in_user, callback) {
     
     MongoClient.connect(url, function (err, db) {
         if (err) {
@@ -490,14 +498,14 @@ exports.updateTask = function (in_id, in_title, in_description, in_state, in_fro
                             'state':in_state,
                             'from':in_from,
                             'to':in_to,
-                            'milestone': in_milestone,
-                            'user': in_user,
-                            'problem':in_problem,
-                            'comment':in_comment
+                            'project': new mongodb.ObjectID(in_project),
+                            'milestone': new mongodb.ObjectID(in_milestone),
+                            'user': new mongodb.ObjectID(in_user)
                             } },
             function (err, result) {
                 if (err) throw err;
                 console.log(result);
+                callback();
             });
 
             db.close();
@@ -543,14 +551,13 @@ exports.removeTasks = function(in_id) {
             });   
 
             db.close();
-            
         }
     });
 };
 
 // --------------------------------------------------------------------------------------------------------------
 
-exports.insertComment = function (in_user, in_task, in_type, in_text, in_state){
+exports.insertComment = function (in_user, in_task, in_type, in_text, in_state, in_problem, callback){
     MongoClient.connect(url, function (err, db) {
         if (err) {
             console.log('Unable to connect to the mongoDB server. Error:', err);
@@ -558,17 +565,24 @@ exports.insertComment = function (in_user, in_task, in_type, in_text, in_state){
             console.log('Connection established to', url);
 
             var collection = db.collection('comments');    
-            var comment = {user: in_user, task: in_task, type: in_type, text: in_text, state: in_state};
-
+            var comment = {
+                user: in_user ? new mongodb.ObjectID(in_user) : null, 
+                task: in_task ? new mongodb.ObjectID(in_task) : null, 
+                type: in_type, 
+                text: in_text, 
+                state: in_state, 
+                problem: in_problem ? new mongodb.ObjectID(in_problem) : null
+            };
 
             collection.insert(comment, function (err, result) {
                 if (err) {
                     console.log(err);
                 } else {
                     console.log('Inserted %d documents into the "comments" collection. The documents inserted with "_id" are:', result.length, result);
+                    callback(comment._id);
                 }
 
-            db.close();
+                db.close();
             });
         }
     });
@@ -612,7 +626,45 @@ exports.findAllComments = function(callback) {
     });
 };
 
-exports.updateComment = function (in_id, in_user, in_task, in_type, in_text, in_state) {
+exports.findAllProblems = function(callback) {
+
+    MongoClient.connect(url, function (err, db) {
+        if (err) {
+            console.log('Unable to connect to the mongoDB server. Error:', err);
+        } else {
+            console.log('Connection established to', url);
+
+            var collection = db.collection('comments');
+
+            collection.find({type: "problem"}).toArray(function (err, result) {
+                if (err) return console.log(err)
+                callback(result);
+            })
+            db.close();
+        }
+    });
+};
+
+exports.findAllSolutionsForProblem = function(problemId, callback) {
+
+    MongoClient.connect(url, function (err, db) {
+        if (err) {
+            console.log('Unable to connect to the mongoDB server. Error:', err);
+        } else {
+            console.log('Connection established to', url);
+
+            var collection = db.collection('comments');
+
+            collection.find({type: "solution", problem: new mongodb.ObjectID(problemId)}).toArray(function (err, result) {
+                if (err) return console.log(err)
+                callback(result);
+            })
+            db.close();
+        }
+    });
+};
+
+exports.updateComment = function (in_id, in_user, in_task, in_type, in_text, in_state, in_problem, callback) {
     
     MongoClient.connect(url, function (err, db) {
         if (err) {
@@ -625,15 +677,17 @@ exports.updateComment = function (in_id, in_user, in_task, in_type, in_text, in_
             collection.update(
             { '_id' : new mongodb.ObjectID(in_id) }, 
                             { $set: { 
-                            'user': in_user,
-                            'task': in_task,
+                            'user': new mongodb.ObjectID(in_user),
+                            'task': new mongodb.ObjectID(in_task),
 							'type': in_type,
                             'text': in_text,
-                            'state': in_state
+                            'state': in_state,
+                            'problem': new mongodb.ObjectID(in_problem)
                             } },
             function (err, result) {
                 if (err) throw err;
                 console.log(result);
+                callback();
             });
 
             db.close();

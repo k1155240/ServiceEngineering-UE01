@@ -47,7 +47,7 @@ var Detail = React.createClass({
             {this.state.milestones.map(m =>
               <Milestone description={m.description} from={m.from} to={m.to} id={m._id} onClick={this.openMilestone}/> 
             )}
-            </div>
+          </div>
         </div>
       </div>
     );

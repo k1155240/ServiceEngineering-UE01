@@ -3,26 +3,25 @@ var request = require('superagent');
 var browserHistory = require('react-router').browserHistory;
 var Link = require('react-router').Link;
 
-var ProblemCreate = React.createClass({
+var ProblemSolutionCreate = React.createClass({
   sendToDb() {
     var that = this;
     request
-    .post('/api/tasks/' + this.props.params.task_id + '/problems')
+    .post('/api/problems/' + this.props.params.comment_id + '/solutions')
     .send({
-          type: "problem",
-          text: document.getElementById("description").value,
-          state: "open"
+          type: "solution",
+          text: document.getElementById("description").value
     })
     .set('Accept', 'application/json')  
     .end(function(err, res) {
-      browserHistory.push("/tasks/" + that.props.params.task_id); 
+      browserHistory.push("/problems/" +  that.props.params.comment_id); 
     });
   },
-  render() {
+  render() {  
     return (
       <div> 
           <div>
-              <h1>Create new problem</h1>
+              <h1>Create new solutions</h1>
           </div>
           <div className="form-group row">
               <label htmlFor="description">Description</label>
@@ -34,4 +33,4 @@ var ProblemCreate = React.createClass({
   }
 });
 
-module.exports = ProblemCreate;
+module.exports = ProblemSolutionCreate;

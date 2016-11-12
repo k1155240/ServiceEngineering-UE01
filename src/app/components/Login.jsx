@@ -5,7 +5,7 @@ var Login = React.createClass({
 		return (
 			<div>
 				<h1>Login</h1>
-				<p><a href="/auth/facebook">Login with Facebook</a></p>
+				<h2><a href="/auth/facebook">Login with Facebook</a></h2>
 			</div>
 		);
 	}

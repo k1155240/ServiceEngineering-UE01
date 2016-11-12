@@ -14,7 +14,7 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(session({ secret: 'SECRET' }));
+app.use(session({ secret: 'thatsfunny' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -27,11 +27,11 @@ passport.use(new FacebookStrategy({
         console.log('profile ' + profile.id);
         Mongo.findUserByFb(profile.id, function(users){
             if(users.length > 0) {
-                done(null, profile.id);
+                done(null, users[0]);
             }
             else {
-                Mongo.insertUser('', profile.displayName, '', profile.id, function(id) {
-                    done(null, profile.id);
+                Mongo.insertUser('', profile.displayName, '', profile.id, function(id, user) {
+                    done(null, user);
                 });
             }
         });
@@ -39,6 +39,7 @@ passport.use(new FacebookStrategy({
 ));
 
 passport.serializeUser(function(user, done) {
+    console.log(user);
   done(null, user); 
 });
 
@@ -64,6 +65,15 @@ router.route('/users')
         Mongo.findAllUsers(function(users) {
            res.json(users);
         });
+    });
+
+router.route('/users/:user_id')
+
+    // get all the users (accessed at GET /api/users)
+    .get(function(req, res) {
+        Mongo.findUser(req.params.user_id, function(users) {
+           res.json(users);
+        }); 
     });
 
 router.route('/projects')
@@ -148,10 +158,12 @@ router.route('/tasks')
         
         var id = req.body.id;
         if (id) {
-            Mongo.updateTask(id, req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.milestone, req.body.user, null, null);
+            Mongo.updateTask(id, req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.project, req.body.milestone, req.body.user, function() {
+                res.json({success: true});
+            });
             
         } else{
-            Mongo.insertTask(req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.milestone, req.body.user, null, null, function(id){
+            Mongo.insertTask(req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.project, req.body.milestone, req.body.user, function(id){
                 res.json({id: id});
             });
         } 
@@ -175,17 +187,18 @@ router.route('/tasks/:task_id')
         });
     });
 
-router.route('/tasks/:task_id/comments')
+router.route('/tasks/:task_id/problems')
 
     // get the task with that id (accessed at GET /api/tasks/:task_id)
     .post(function(req, res) {
         
         var id = req.body.id;
         if (id) {
-            Mongo.updateComment(id, req.body.text, req.body.userId, req.body.taskId, req.body.problems, req.body.solution);
-            
+            Mongo.updateComment(id, req.user._id, req.params.task_id, "problem", req.body.text, req.body.state, null, function(id){
+                res.json({success: true});
+            }); 
         } else{
-            Mongo.insertComment(req.body.text, req.body.userId, req.body.taskId, req.body.problems, req.body.solution, function(id){
+            Mongo.insertComment(req.user._id, req.params.task_id, "problem", req.body.text, "open", null, function(id){
                 res.json({id: id});
             });
         }
@@ -199,16 +212,29 @@ router.route('/tasks/:task_id/comments')
 
 // ---------------------------------------------------------------------------------------
 // ALL COMMENTS
-router.route('/comments')
+router.route('/problems')
     // get all comments (accessed at GET /api/comments)
     .get(function(req, res) {
-         Mongo.findAllComments(function(items) {
+         Mongo.findAllProblems(function(items) {
            res.json(items);
         });
     });
 
-// COMMENT WITH ID
-router.route('/comments/:comment_id')
+router.route('/problems/:problem_id/solutions')
+    // get all comments (accessed at GET /api/comments)
+    .get(function(req, res) {
+         Mongo.findAllSolutionsForProblem(req.params.problem_id, function(items) {
+           res.json(items);
+        });
+    })
+    .post(function(req, res) {
+         Mongo.insertComment(req.user._id, req.body.task, "solution", req.body.text, null, req.params.problem_id, function(id){
+            res.json({id: id});
+        });
+    });
+
+// PROBLEM WITH ID
+router.route('/problems/:comment_id')
     // get the comment with that id (accessed at GET /api/comments/:comment_id)
     .get(function(req, res) {
          Mongo.findComment(req.params.comment_id, function(items) {
@@ -216,32 +242,15 @@ router.route('/comments/:comment_id')
         });
     });
 
-// CREATE COMMENT    	
-router.route('/createComment')
-	// post comment to db
-	.post(function(req, res) {
-        var id = req.body.id;
-        if (id) {
-            Mongo.updateComment(id, req.body.user, req.body.task, req.body.type, req.body.text, req.body.state); 
-        } else {
-            Mongo.insertComment(req.body.user, req.body.task, req.body.type, req.body.text, req.body.state);
-        }
-    })
-
-// UPDATE COMMENT    	
-router.route('/updateComment/')
-	// post comment to db
-	.post(function(req, res) {
-        console.log(Mongo.updateComment(req.body.id, req.body.user, req.body.task, req.body.type, req.body.text, req.body.state));
-    }); 
-
-
 app.use('/api', router);
 
 app.get("/projects/*", ensureAuthenticated, function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
-});
+}); 
 app.get("/tasks/*", ensureAuthenticated, function(req,res,next){
+  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+});
+app.get("/problems/*", ensureAuthenticated, function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
 });
 app.get("/login/*",function(req,res,next){
@@ -251,6 +260,7 @@ app.get("/",ensureAuthenticated,function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
 }); 
 app.get("/index.html",ensureAuthenticated,function(req,res,next){
+    console.log(req.user);
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
 }); 
 
@@ -262,12 +272,12 @@ app.listen(7777,function(){
 
 function ensureAuthenticatedAPI(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-   return next();
-    //res.json({authenticated: false});
+   //return next();
+    res.json({authenticated: false});
 }
 
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-   return next();
-    //res.redirect('/login/')
+  //return next();
+    res.redirect('/login/')
 }

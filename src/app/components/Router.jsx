@@ -21,9 +21,11 @@ var TaskCreateTask = require('./Tasks.CreateTask.jsx');
 var TaskDetail = require('./Tasks.Detail.jsx');
 var TaskEdit = require('./Tasks.Edit.jsx');
 
-var ProblemOverview = require('./Problems.Overview.jsx');
+var ProblemOverview = require('./Problems.jsx');
 var ProblemCreate = require('./Problems.Create.jsx');
 var ProblemDetail = require('./Problems.Detail.jsx');
+var ProblemEdit = require('./Problems.Edit.jsx');
+var ProblemSolutionCreate = require('./Problems.Solutions.Create.jsx');
 
 var MilestonesCreate = require('./Milestones.Create.jsx');
 var MilestoneDetail = require('./Milestones.Detail.jsx');
@@ -38,8 +40,6 @@ function requireAuth(nextState, replace) {
     };
 
 var router = React.createClass({
-    
-
     render(){
 		return (
 			<Router history={browserHistory}>
@@ -64,10 +64,16 @@ var router = React.createClass({
                     <Route path="tasks/:task_id" component={TaskDetail} onEnter={requireAuth}></Route>
                     <Route path="tasks/:task_id/edit" component={TaskEdit} onEnter={requireAuth}></Route>				
 
+                    <Route path="problems" component={ProblemOverview} onEnter={requireAuth}></Route>
+                    <Route path="problems/create" component={ProblemCreate} onEnter={requireAuth}></Route>
+                    <Route path="problems/:comment_id/solutions/create" component={ProblemSolutionCreate} onEnter={requireAuth}></Route>
+                    <Route path="problems/:comment_id" component={ProblemDetail} onEnter={requireAuth}></Route>
+                    <Route path="problems/:comment_id/edit" component={ProblemEdit} onEnter={requireAuth}></Route>
+                    
+
                     <Route path="tasks/:task_id/problems" component={ProblemOverview} onEnter={requireAuth}></Route>
                     <Route path="tasks/:task_id/problems/create" component={ProblemCreate} onEnter={requireAuth}></Route>
-                    <Route path="tasks/:task_id/problems/:comment_id" component={ProblemDetail} onEnter={requireAuth}></Route>
-                </Route>
+                </Route> 
             </Router>
 		);
 	}

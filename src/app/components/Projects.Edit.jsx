@@ -46,7 +46,7 @@ var TaskEdit = React.createClass({
             </div>
             <div className="form-group row">
                 <label htmlFor="title">Title</label>
-                <input type="text" className="form-control"  id="title" name="title" placeholder="Thema" value={this.state.project.title} onChange={this.handleChangeTitle}/>
+                <input type="text" className="form-control"  id="title" name="title" placeholder="Title" value={this.state.project.title} onChange={this.handleChangeTitle}/>
             </div>
             <div className="form-group row">
                 <label htmlFor="description">Desciption</label>

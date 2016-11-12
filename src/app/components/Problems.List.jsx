@@ -10,7 +10,7 @@ var ProblemList = React.createClass({
 
 	componentDidMount() {
 		var that = this;
-		request.get('/api/comments/').end(function(err, res) {
+		request.get('/api/problems/').end(function(err, res) {
 			that.setState({ problems: res.body });
 		});
 	},
@@ -22,15 +22,15 @@ var ProblemList = React.createClass({
 	render(){
 		var self = this;
 
-		return (
+		return ( 
 			<div className="list-group col-xs-12 col-md-6 col-md-offset-3">
-				<span className="list-group-item active">Problem</span>
+				<span className="list-group-item active">Problems</span>
 				{this.state.problems.map(t =>
 					<Problem id={t._id} user={t.user} task={t.task} type={t.type} text={t.text} state={t.state} onClick={self.click}/>
 				)}
 			</div>
 		)
-
+ 
 	}
 
 });

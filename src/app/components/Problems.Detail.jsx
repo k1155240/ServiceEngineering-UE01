@@ -2,26 +2,41 @@ var React = require('react');
 var Link = require('react-router').Link;
 var request = require('superagent');
 var updateRequest = require('superagent');
+var Solution = require('./Problems.Solutions.ListItem.jsx');
 
 var ProblemDetail = React.createClass({
 	getInitialState() {
-		return { comments: [] };
+		return { problem: {}, task:{}, user:{}, solutions:[] };
 	},
 
 	componentDidMount() {
 		var that = this;
 
-		request.get('/api/comments/' + this.props.params.comment_id).end(function(err, res) {
-			that.setState({ comments: res.body[0] });
+		request.get('/api/problems/' + this.props.params.comment_id).end(function(err, res) {
+			that.setState({ problem: res.body[0] });
+
+			request.get('/api/problems/' + that.props.params.comment_id + '/solutions').end(function(err, res) {
+				that.setState({ solutions: res.body });
+			});
+
+			request.get('/api/tasks/' + that.state.problem.task).end(function(err, res) {
+				that.setState({ task: res.body[0] });
+			});
+			
+			if(that.state.problem.user) {
+				request.get('/api/users/' + that.state.problem.user).end(function(err, res) {
+					that.setState({ user: res.body[0] });
+				});
+			}
 		});
 	},
 
 	handleSubmit(event) {
-		alert(this.state.comments.state);
+		alert(this.state.problem.state);
   	},
 
 	closeProblem() {
-		if (this.state.comments.type == "Problem" && this.state.comments.state == "Open") {
+		if (this.state.problem.type == "Problem" && this.state.problem.state == "Open") {
 			updateRequest
 			.post('/api/createComment/')
 			.send({id: this.props.params.comment_id, 
@@ -41,23 +56,37 @@ var ProblemDetail = React.createClass({
 
   	render() {
 		return (
-		<div>
-			<h1>Problem Detail</h1>
-			<p><Link to={'/index.html/'}>Home</Link></p>
-			<p><Link to={'/problemOverview'}>Problem Overview</Link></p>
-			<p>User ID: <input type="text" value={this.state.comments.user} /></p>
-			<p>Task ID: <input type="text" value={this.state.comments.task} /></p>
-			<p>Type: <input type="text" value={this.state.comments.type} /></p>
-			<p>Text: <input type="text" value={this.state.comments.text} /></p>
-			<p>State: <input type="text" value={this.state.comments.state} /></p>
-			<p><button onClick={this.handleSubmit}>Edit</button></p>
-			<p><button onClick={this.closeProblem}>Close Problem</button></p>
-			<h2>Add Comment/Solution</h2>
-			<p>User ID: <input type="text"/></p>
-			<p>Task ID: <input type="text"/></p>
-			<p>Text: <input type="text"/></p>
-			<p><button>Add Comment</button><button>Add Solution</button></p>
-		</div>
+			<div>
+                <div>
+                <h1>Problem Detail</h1>
+                <div><p><Link className="btn btn-default" to={'/problems/' + this.props.params.comment_id + '/edit'}>Edit</Link></p></div>
+                </div>
+                <label className="form-group row">Task</label>
+                <div className="form-group row">
+                <p className="form-control-static"><Link to={'/tasks/' + this.state.problem.task}>{this.state.task.title}</Link></p>
+                </div>
+				<label className="form-group row">User</label>
+                <div className="form-group row">
+                <p className="form-control-static">{this.state.user.lastname}</p>
+                </div> 
+                <label className="form-group row">Description</label>
+                <div className="form-group row">
+                <p className="form-control-static">{this.state.problem.text}</p>
+                </div>
+				<label className="form-group row">State</label>
+                <div className="form-group row">
+                <p className="form-control-static">{this.state.problem.state}</p>
+                </div>
+				<div className="form-group row">
+					<div><p><Link className="btn btn-default" to={'/problems/' + this.props.params.comment_id + '/solutions/create'}>Create new solution</Link></p></div>
+					<div className="list-group col-xs-12 col-md-6 col-md-offset-3">
+						<span className="list-group-item active">Solutions</span>
+						{this.state.solutions.map(t =>
+							<Solution key={t._id} id={t._id} user={t.user} text={t.text}/>
+						)}
+					</div>
+				</div>
+            </div> 
 		);
   	}
 });
