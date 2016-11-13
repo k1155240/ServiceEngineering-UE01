@@ -20,6 +20,7 @@ var TaskCreateTask = React.createClass({
         });
 	},
     sendToDb() {
+        if(this.state.selectedUserId != "" && this.state.selectedProjectId != "" && this.state.selectedMilestoneId != "") {
         request
         .post('/api/tasks/')
         .send({title: document.getElementById("title").value,
@@ -35,6 +36,9 @@ var TaskCreateTask = React.createClass({
         .end(function(err, res) {
             browserHistory.push("/tasks/" + res.body.id);
         }); 
+        } else {
+        alert("User, project and milestone must not be empty.");
+        }
     },
     handleChangeProjectId(event) {
         this.state.selectedProjectId = event.target.value;
@@ -73,7 +77,7 @@ var TaskCreateTask = React.createClass({
                 </div>
                 <div className="form-group row">
                     <label htmlFor="to">To</label>
-                    <input type="text" className="form-control" id="to" name="to" placeholder="MM-DD-JJJ"/>
+                    <input type="text" className="form-control" id="to" name="to" placeholder="MM-DD-JJJJ"/>
                 </div>
                 <div className="form-group row">
                     <label htmlFor="users">Assigned user</label>
