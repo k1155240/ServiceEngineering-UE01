@@ -137,6 +137,17 @@ router.route('/projects/:project_id/milestones')
         Mongo.removeMilestone(req.body.id);
     });
 
+
+router.route('/milestones/:milestone_id/tasks')
+
+    // get the tasks of the milestone of the project (accessed at GET /api/milestones/:milestone_id/tasks)
+    .get(function(req, res) {
+        // res.json(milestones.filter(function(m){ return m.projectId == req.params.project_id})); 
+        Mongo.findTaskByMilestoneID(req.params.milestone_id, function(items) {
+            res.json(items);
+         });
+    });
+
 router.route('/milestones/:milestone_id')
 
     // get the milestones of the project (accessed at GET /api/projects/:project_id/milestones)

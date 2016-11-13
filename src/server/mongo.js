@@ -461,6 +461,23 @@ exports.findTask = function(in_id, callback) {
         }
     });
 };
+exports.findTaskByMilestoneID = function(in_milestoneId, callback) {
+    MongoClient.connect(url, function (err, db) {
+        if (err) {
+            console.log('Unable to connect to the mongoDB server. Error:', err);
+        } else {
+            console.log('Connection established to', url);
+
+            var collection = db.collection('tasks');
+
+            collection.find({milestone: new mongodb.ObjectID(in_milestoneId)}).toArray(function (err, result) {
+                if (err) return console.log(err)
+                    callback(result);
+            })
+            db.close();
+        }
+    });
+};
 
 exports.findCommentsByTaskId = function(in_taskId, callback) {
     MongoClient.connect(url, function (err, db) {
