@@ -222,7 +222,7 @@ exports.findMilestoneByProjectId = function(in_projectId, callback) {
 
             var collection = db.collection('milestones');
 
-            collection.find({projectId: new mongodb.ObjectID(in_projectId)}).toArray(function (err, result) {
+            collection.find({projectId: new mongodb.ObjectID(in_projectId)}).sort({to:1}).toArray(function (err, result) {
                 if (err) return console.log(err)
                     callback(result);
             })
@@ -258,7 +258,7 @@ exports.findAllMilestones = function(callback) {
 
             var collection = db.collection('milestones');
 
-            collection.find().toArray(function (err, result) {
+            collection.find().sort({to:1}).toArray(function (err, result) {
                 if (err) return console.log(err)
                 callback(result);
             })
@@ -617,7 +617,7 @@ exports.findAllComments = function(callback) {
 
             var collection = db.collection('comments');
 
-            collection.find().toArray(function (err, result) {
+            collection.find().sort({state:1}).toArray(function (err, result) {
                 if (err) return console.log(err)
                 callback(result);
             })
@@ -636,7 +636,7 @@ exports.findAllProblems = function(callback) {
 
             var collection = db.collection('comments');
 
-            collection.find({type: "problem"}).toArray(function (err, result) {
+            collection.find({type: "problem"}).sort({state:-1}).toArray(function (err, result) {
                 if (err) return console.log(err)
                 callback(result);
             })

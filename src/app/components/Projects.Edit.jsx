@@ -5,8 +5,8 @@ var browserHistory = require('react-router').browserHistory;
 
 var TaskEdit = React.createClass({
     getInitialState() {
-    return { project: {}};
-  },
+        return { project: {}};
+    },
 
 	componentDidMount() {
 		var that = this;
