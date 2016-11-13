@@ -58,6 +58,13 @@ app.get('/auth/facebook/callback',
 var router = express.Router();
 router.use(ensureAuthenticatedAPI);
 
+router.route('/clear')
+
+    // get all the users (accessed at GET /api/users)
+    .get(function(req, res) {
+        Mongo.clear();
+    });
+
 router.route('/users')
 
     // get all the users (accessed at GET /api/users)

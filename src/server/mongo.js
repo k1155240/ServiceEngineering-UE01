@@ -7,6 +7,33 @@ var MongoClient = mongodb.MongoClient;
 // Connection URL
 var url = 'mongodb://localhost:27017/projectmanagement';
 
+exports.clear = function() {
+    MongoClient.connect(url, function (err, db) {
+        if (err) {
+            console.log('Unable to connect to the mongoDB server. Error:', err);
+        } else {
+            console.log('Connection established to', url);
+
+            var collection = db.collection('users');
+            collection.remove({});
+
+            collection = db.collection('tasks');
+            collection.remove({});
+
+            collection = db.collection('projects');
+            collection.remove({});
+
+            collection = db.collection('milestones');
+            collection.remove({});
+
+            collection = db.collection('comments');
+            collection.remove({});
+
+            db.close();
+        }
+    });
+};
+
 exports.findAllUsers = function(callback) {
     MongoClient.connect(url, function (err, db) {
         if (err) {
@@ -653,7 +680,7 @@ exports.findAllProblems = function(callback) {
 
             var collection = db.collection('comments');
 
-            collection.find({type: "problem"}).sort({state:-1}).toArray(function (err, result) {
+            collection.find({type: "problem"}).sort({state:1}).toArray(function (err, result) {
                 if (err) return console.log(err)
                 callback(result);
             })

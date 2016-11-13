@@ -57,7 +57,7 @@ var MilestoneDetail = React.createClass({
         <div className="form-group row">
           <div><p><Link className="btn btn-default" to={'/tasks/create/'}>Create new task</Link></p></div>
           <div className="list-group col-xs-12 col-md-6 col-md-offset-3">
-            <span className="list-group-item active">Milestones</span>
+            <span className="list-group-item active">Tasks</span>
             {this.state.tasks.map(m =>
               <TaskListItem id={m._id} title={m.title}  onClick={this.openTask}/> 
             )}

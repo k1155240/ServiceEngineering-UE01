@@ -44,6 +44,10 @@ var TaskCreateTask = React.createClass({
         this.state.selectedProjectId = event.target.value;
         this.setState(this.state);
         var that = this;
+        that.state.selectedMilestoneId = '';
+        that.state.milestones = [];
+        that.setState(that.state);
+
         request.get('/api/projects/' +  this.state.selectedProjectId + '/milestones').end(function(err, res) {
 			that.state.milestones = res.body;
             that.setState(that.state);
@@ -82,7 +86,7 @@ var TaskCreateTask = React.createClass({
                 <div className="form-group row">
                     <label htmlFor="users">Assigned user</label>
                     <select id="users" name="users" className="form-control"  value={this.state.selectedUserId} onChange={this.handleChangeUserId}>
-                        <option>Choose a user</option>
+                        <option value="">Choose a user</option>
                         {this.state.users.map(u =>
                             <option key={u._id} value={u._id}>{u.lastname}</option>
                         )} 
@@ -91,7 +95,7 @@ var TaskCreateTask = React.createClass({
                 <div className="form-group row">
                     <label htmlFor="project">Project</label>
                     <select id="project" name="project" className="form-control" value={this.state.selectedProjectId} onChange={this.handleChangeProjectId}>
-                        <option>Choose a project</option>
+                        <option value="">Choose a project</option>
                         {this.state.projects.map(p =>
                             <option key={p._id} value={p._id}>{p.title}</option>
                         )}
@@ -100,7 +104,7 @@ var TaskCreateTask = React.createClass({
                 <div className="form-group row">
                     <label htmlFor="milestone">Milestone</label>
                     <select id="milestone" name="milestone" className="form-control" value={this.state.selectedMilestoneId} onChange={this.handleChangeMilestoneId}>
-                        <option>Choose a milestone</option>
+                        <option value="">Choose a milestone</option>
                         {this.state.milestones.map(m =>
                             <option key={m._id} value={m._id}>{m.description}</option>
                         )} 
