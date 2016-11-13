@@ -2,24 +2,37 @@ var React = require('react');
 var Link = require('react-router').Link;
 var request = require('superagent');
 var browserHistory = require('react-router').browserHistory;
+var TaskListItem = require('./Tasks.ListItem.jsx');
 
 var MilestoneDetail = React.createClass({
     getInitialState() {
-        return { milestone: {}, project: {} };
+        return { milestone: {}, project: {}, tasks: [] };
     },
+      loadTasks() {
+		var that = this;
+      request.get('/api/milestones/' + this.props.params.milestone_id + '/tasks').end(function(err, res) {
+        that.setState({ milestone: that.state.milestone, tasks: res.body  });
+      })
+  },
 	componentDidMount() {
 		var that = this;
-
 		request.get('/api/milestones/' + this.props.params.milestone_id).end(function(err, res) {
-            that.state.milestone = res.body[0];
-            that.setState(that.state);
+            that.setState({ milestone: res.body[0], tasks: [] });
+            
             
             request.get('/api/projects/' + that.props.params.project_id).end(function(err, res) {
-                that.state.project = res.body[0];
-                that.setState(that.state);
+                that.setState({ project: res.body[0] });
             });
+            that.loadTasks();
         });
 	},
+     openTask(id) {
+         browserHistory.push("/tasks/" + id);
+  },
+  TaskCreate() {
+       browserHistory.push("/tasks/create/");
+
+  },
 	render(){
         return (
             <div>
@@ -39,6 +52,18 @@ var MilestoneDetail = React.createClass({
                 <div className="form-group row">
                 <p className="form-control-static">{this.state.milestone.to}</p>
                 </div>
+                <div>
+				<label className="form-group row">Tasks</label>
+        <div className="form-group row">
+          <div><p><Link className="btn btn-default" to={'/tasks/create/'}>Create new task</Link></p></div>
+          <div className="list-group col-xs-12 col-md-6 col-md-offset-3">
+            <span className="list-group-item active">Milestones</span>
+            {this.state.tasks.map(m =>
+              <TaskListItem id={m._id} title={m.title}  onClick={this.openTask}/> 
+            )}
+          </div>
+        </div>
+            </div>
             </div>
 		)
 	}
