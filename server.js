@@ -269,10 +269,10 @@ app.get("/tasks/*", ensureAuthenticated, function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
 });
 app.get("/problems/*", ensureAuthenticated, function(req,res,next){
-  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+  res.sendFile(path.resolve('/../app//index.html'));
 });
 app.get("/login/*",function(req,res,next){
-  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+  res.sendFile(path.resolve('./build/app/index.html'));
 }); 
 app.get("/",ensureAuthenticated,function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
