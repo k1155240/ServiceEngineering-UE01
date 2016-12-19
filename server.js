@@ -2,9 +2,7 @@ var express = require("express");
 var path = require("path");
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
-var session = require('express-session')
-
-var Mongo = require('./build/server/mongo.js');
+var session = require('express-session'
 
 var app = express();
 
@@ -28,12 +26,12 @@ app.get("/login/*",function(req,res,next){
 
 app.get("/",function(req,res,next){
   //res.sendFile(path.resolve(__dirname + '/../app//index.html'));
-  res.send("Hello world " + __dirname);
+  res.send("Hello world " + __dirname + " " + process.version);
 }); 
 app.get("/index.html",function(req,res,next){
     console.log(req.user);
   //res.sendFile(path.resolve(__dirname + '/../app//index.html'));
-  res.send("Hello world " + __dirname);
+  res.send("Hello world " + __dirname + " " + process.version);
 }); 
 
 app.listen(process.env.PORT,function(){
