@@ -19,8 +19,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 passport.use(new FacebookStrategy({
-        clientID: '559105414283188',
-        clientSecret: '2bfd1e271df4c63f8788d588ef17b43f',
+        clientID: '1613716625604484',
+        clientSecret: '7a7b2c6d52d9d250370865ccd9f5f114',
         callbackURL: "http://sepm.azurewebsites.net/auth/facebook/callback"
     },
     function(accessToken, refreshToken, profile, done) {
