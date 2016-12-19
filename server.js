@@ -21,7 +21,7 @@ app.use(passport.session());
 passport.use(new FacebookStrategy({
         clientID: '559105414283188',
         clientSecret: '2bfd1e271df4c63f8788d588ef17b43f',
-        callbackURL: "http://localhost:7777/auth/facebook/callback"
+        callbackURL: "http://sepm.azurewebsites.net/auth/facebook/callback"
     },
     function(accessToken, refreshToken, profile, done) {
         console.log('profile ' + profile.id);
@@ -263,26 +263,26 @@ router.route('/problems/:comment_id')
 app.use('/api', router);
 
 app.get("/projects/*", ensureAuthenticated, function(req,res,next){
-  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+  res.sendFile(path.resolve('./build/app/index.html'));
 }); 
 app.get("/tasks/*", ensureAuthenticated, function(req,res,next){
-  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+  res.sendFile(path.resolve('./build/app/index.html'));
 });
 app.get("/problems/*", ensureAuthenticated, function(req,res,next){
-  res.sendFile(path.resolve('/../app//index.html'));
+  res.sendFile(path.resolve('./build/app/index.html'));
 });
 app.get("/login/*",function(req,res,next){
   res.sendFile(path.resolve('./build/app/index.html'));
 }); 
 app.get("/",ensureAuthenticated,function(req,res,next){
-  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+  res.sendFile(path.resolve('./build/app/index.html'));
 }); 
 app.get("/index.html",ensureAuthenticated,function(req,res,next){
     console.log(req.user);
-  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+  res.sendFile(path.resolve('./build/app/index.html'));
 }); 
 
-app.use(express.static(path.join(__dirname,"../app")));
+app.use(express.static(path.resolve('./build/app')));
 
 app.listen(process.env.PORT || 7777,function(){
     console.log("Started listening on port", process.env.PORT || 7777);
