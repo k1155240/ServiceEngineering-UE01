@@ -275,11 +275,13 @@ app.get("/login/*",function(req,res,next){
   res.sendFile(path.resolve(__dirname + '/../app//index.html'));
 }); 
 app.get("/",ensureAuthenticated,function(req,res,next){
-  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+  //res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+  res.send("Hello world " + __dirname);
 }); 
 app.get("/index.html",ensureAuthenticated,function(req,res,next){
     console.log(req.user);
-  res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+  //res.sendFile(path.resolve(__dirname + '/../app//index.html'));
+  res.send("Hello world " + __dirname);
 }); 
 
 app.use(express.static(path.join(__dirname,"../app")));
