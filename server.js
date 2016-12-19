@@ -6,9 +6,6 @@ var session = require('express-session')
 
 var Mongo = require('./mongo.js');
 
-var passport = require('passport')
-  , FacebookStrategy = require('passport-facebook').Strategy;
-
 var app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -17,43 +14,6 @@ app.use(cookieParser());
 app.use(session({ secret: 'thatsfunny' }));
 app.use(passport.initialize());
 app.use(passport.session());
-
-passport.use(new FacebookStrategy({
-        clientID: '559105414283188',
-        clientSecret: '2bfd1e271df4c63f8788d588ef17b43f',
-        callbackURL: "http://localhost:7777/auth/facebook/callback"
-    },
-    function(accessToken, refreshToken, profile, done) {
-        console.log('profile ' + profile.id);
-        Mongo.findUserByFb(profile.id, function(users){
-            if(users.length > 0) {
-                done(null, users[0]);
-            }
-            else {
-                Mongo.insertUser('', profile.displayName, '', profile.id, function(id, user) {
-                    done(null, user);
-                });
-            }
-        });
-    }
-));
-
-passport.serializeUser(function(user, done) {
-    console.log(user);
-  done(null, user); 
-});
-
-passport.deserializeUser(function(user, done) {
-  done(null, user);
-});
-
-app.get('/auth/facebook', passport.authenticate('facebook'));
-
-app.get('/auth/facebook/callback',
-    passport.authenticate('facebook', { 
-        successRedirect: '/login/success',
-        failureRedirect: '/login' 
-}));
 
 var router = express.Router();
 router.use(ensureAuthenticatedAPI);
@@ -290,13 +250,13 @@ app.listen(process.env.PORT,function(){
 });
 
 function ensureAuthenticatedAPI(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-   //return next();
-    res.json({authenticated: false});
+  //if (req.isAuthenticated()) { return next(); }
+   return next();
+    //res.json({authenticated: false});
 }
 
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) { return next(); }
-  //return next();
-    res.redirect('/login/')
+  //if (req.isAuthenticated()) { return next(); }
+  return next();
+    //res.redirect('/login/')
 }
