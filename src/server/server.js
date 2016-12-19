@@ -21,7 +21,7 @@ app.use(passport.session());
 passport.use(new FacebookStrategy({
         clientID: '559105414283188',
         clientSecret: '2bfd1e271df4c63f8788d588ef17b43f',
-        callbackURL: "http://localhost:7777/auth/facebook/callback"
+        callbackURL: "http://sepm.azurewebsites.net/auth/facebook/callback"
     },
     function(accessToken, refreshToken, profile, done) {
         console.log('profile ' + profile.id);
@@ -284,8 +284,8 @@ app.get("/index.html",ensureAuthenticated,function(req,res,next){
 
 app.use(express.static(path.join(__dirname,"../app")));
 
-app.listen(7777,function(){
-    console.log("Started listening on port", 7777);
+app.listen(80,function(){
+    console.log("Started listening on port", 80);
 });
 
 function ensureAuthenticatedAPI(req, res, next) {
