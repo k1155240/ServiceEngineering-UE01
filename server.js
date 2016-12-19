@@ -4,7 +4,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
 var session = require('express-session')
 
-var Mongo = require('build/server/mongo.js');
+var Mongo = require('/build/server/mongo.js');
 
 var app = express();
 
