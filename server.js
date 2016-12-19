@@ -285,8 +285,6 @@ app.get("/index.html",function(req,res,next){
   res.send("Hello world " + __dirname);
 }); 
 
-app.use(express.static(path.join(__dirname,"../app")));
-
 app.listen(process.env.PORT,function(){
     console.log("Started listening on port", process.env.PORT);
 });
