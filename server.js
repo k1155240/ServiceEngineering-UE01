@@ -12,8 +12,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(session({ secret: 'thatsfunny' }));
-app.use(passport.initialize());
-app.use(passport.session());
 
 var router = express.Router();
 router.use(ensureAuthenticatedAPI);
