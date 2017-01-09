@@ -213,6 +213,7 @@ exports.insertMilestone = function(in_to, in_description, in_projectId, callback
 
 
     function executeStatement() {  
+        var uid = guid();
         request = new Request("INSERT INTO Milestone VALUES (@in_ID, @in_to, @in_description, @in_projectId);", function(err) {  
          if (err) {  
             console.log(err);}  
