@@ -739,7 +739,7 @@ exports.findCommentsByTaskId = function(in_taskId, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Comment WHERE task = @in_taskId;", function(err) {  
+        request = new Request("SELECT * FROM Comment WHERE task = @in_taskId and type='problem';", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -995,7 +995,7 @@ exports.findAllProblems = function(callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Problem;", function(err) {  
+        request = new Request("SELECT * FROM Comment WHERE type='problem';", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -1035,7 +1035,7 @@ exports.findAllSolutionsForProblem = function(in_problemId, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Problem WHERE type = 'solution' and id = @in_problemId;", function(err) {  
+        request = new Request("SELECT * FROM Comment WHERE type = 'solution' and problem = @in_problemId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
