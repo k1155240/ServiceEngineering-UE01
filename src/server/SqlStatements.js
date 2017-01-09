@@ -870,7 +870,7 @@ exports.insertComment = function (in_user, in_task, in_type, in_text, in_state, 
 
 
     function executeStatement() {  
-        request = new Request("INSERT INTO Comment VALUES (in_ID, in_user, in_task, in_type, in_text, in_state, in_problem);", function(err) {  
+        request = new Request("INSERT INTO Comment VALUES (@in_ID, @in_user, @in_task, @in_type, @in_text, @in_state, @in_problem);", function(err) {  
          if (err) {  
             console.log(err);}  
         });  
