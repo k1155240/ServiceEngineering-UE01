@@ -256,7 +256,7 @@ exports.findMilestone = function(in_id, callback) {
         if (err) {  
             console.log(err);}  
         });  
-        request.addParameter('in_milestoneId', TYPE.NVarChar, in_id);
+        request.addParameter('in_milestoneId', TYPES.NVarChar, in_id);
         var result = [];
         request.on('row', function(columns) {  
             var obj = {};
