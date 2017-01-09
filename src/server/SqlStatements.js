@@ -109,6 +109,47 @@ exports.insertUser = function(facebookId, in_firstname, in_lastname, in_email, c
     
 };
 
+exports.findUser = function(in_ID, callback) {
+
+    var connection = new Connection(config);  
+    connection.on('connect', function(err) {  
+        console.log("Connected");
+        if (err) {  
+            console.log(err);
+        }  
+        executeStatement();  
+    }); 
+
+    function executeStatement() {  
+        request = new Request("SELECT * FROM Users WHERE _id = @in_ID;", function(err) {  
+        if (err) {  
+            console.log(err);}  
+        });
+        request.addParameter('in_ID', TYPES.NVarChar,in_ID);  
+        var result = [];
+        request.on('row', function(columns) {  
+            var obj = {};
+            columns.forEach(function(column) {  
+              if (column.value === null) {  
+                  
+              } else { 
+                  console.log(column); 
+                obj[column.metadata.colName] = column.value;  
+              }  
+            }); 
+            result.push(obj); 
+            console.log(result); 
+        });  
+  
+        request.on('doneInProc', function(rowCount, more) {  
+            console.log(rowCount + ' rows returned');
+            callback(result);  
+        });  
+        connection.execSql(request);  
+    }  
+	
+};
+
 exports.findUserByFbId = function(in_ID, callback) {
 
     var connection = new Connection(config);  
@@ -1040,7 +1081,7 @@ exports.findAllSolutionsForProblem = function(in_problemId, callback) {
         if (err) {  
             console.log(err);}  
         });  
-        request.addParameter('in_problemId', TYPES.NVarChar,in_prolemId);  
+        request.addParameter('in_problemId', TYPES.NVarChar, in_problemId);  
 
         var result = [];
         request.on('row', function(columns) {  
