@@ -67,7 +67,7 @@ exports.findAllUsers = function(callback) {
     
 };
 
-exports.insertUser = function(in_firstname, in_lastname, in_email, callback) {
+exports.insertUser = function(facebookId, in_firstname, in_lastname, in_email, callback) {
     
     var connection = new Connection(config);
     var uid = guid();  
@@ -81,7 +81,7 @@ exports.insertUser = function(in_firstname, in_lastname, in_email, callback) {
 
 
     function executeStatement() {  
-        request = new Request("INSERT INTO Users VALUES (@in_ID, @in_firstname, @in_lastname, @in_email);", function(err) {  
+        request = new Request("INSERT INTO Users VALUES (@in_ID, @in_firstname, @in_lastname, @in_email, @facebookId);", function(err) {  
          if (err) {  
             console.log(err);}  
         });  
@@ -89,6 +89,7 @@ exports.insertUser = function(in_firstname, in_lastname, in_email, callback) {
         request.addParameter('in_firstname', TYPES.NVarChar , in_firstname);  
         request.addParameter('in_lastname', TYPES.NVarChar, in_lastname);  
         request.addParameter('in_email', TYPES.NVarChar,in_email);  
+        request.addParameter('facebookId', TYPES.NVarChar,facebookId);  
         request.on('row', function(columns) {  
             columns.forEach(function(column) {  
               if (column.value === null) {  
@@ -108,7 +109,7 @@ exports.insertUser = function(in_firstname, in_lastname, in_email, callback) {
     
 };
 
-exports.findUser = function(in_ID, callback) {
+exports.findUserByFbId = function(in_ID, callback) {
 
     var connection = new Connection(config);  
     connection.on('connect', function(err) {  
@@ -120,7 +121,7 @@ exports.findUser = function(in_ID, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Users WHERE ID = @in_ID;", function(err) {  
+        request = new Request("SELECT * FROM Users WHERE facebookId = @in_ID;", function(err) {  
         if (err) {  
             console.log(err);}  
         });

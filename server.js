@@ -27,12 +27,12 @@ passport.use(new FacebookStrategy({
     },
     function(accessToken, refreshToken, profile, done) {
         console.log('profile ' + profile.id);
-        sqlDB.findUser(profile.id, function(users){
+        sqlDB.findUserByFbId(profile.id, function(users){
             if(users.length > 0) {
                 done(null, users[0]);
             }
             else {
-                sqlDB.insertUser(profile.id, profile.displayName, '', '', function(id, user) {
+                sqlDB.insertUser(profile.id, '', profile.displayName, '', function(id, user) {
                     done(null, user);
                 });
             }
