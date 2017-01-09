@@ -4,7 +4,7 @@ var config = {
 	    password: '@Password66',
         server: 'sepmdb.database.windows.net',  
         // If you are on Microsoft Azure, you need this:  
-        options: {encrypt: true, database: 'Projectmanagement'}  
+        options: {encrypt: true, database: 'sepm_db'}  
     };  
 
 var Connection = require('tedious').Connection;  
