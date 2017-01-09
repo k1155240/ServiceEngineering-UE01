@@ -150,7 +150,7 @@ exports.findUserByFbId = function(in_ID, callback) {
 	
 };
 
-exports.updateUser = function (in_id, in_firstname, in_lastname, in_email, in_tasks) {
+exports.updateUser = function (in_id, in_firstname, in_lastname, in_email, in_facebookId, in_tasks) {
     
    var connection = new Connection(config);
     var uid = guid();  
@@ -164,7 +164,7 @@ exports.updateUser = function (in_id, in_firstname, in_lastname, in_email, in_ta
 
 
     function executeStatement() {  
-        request = new Request("UPDATE Users SET firstname = @in_firstname, lastname = @in_lastname, email = @in_email WHERE userID = @in_ID;"
+        request = new Request("UPDATE Users SET firstname = @in_firstname, lastname = @in_lastname, email = @in_email, facebookId = @in_facebookId WHERE id = @in_ID;"
 , function(err) {  
          if (err) {  
             console.log(err);}  
@@ -172,7 +172,8 @@ exports.updateUser = function (in_id, in_firstname, in_lastname, in_email, in_ta
         request.addParameter('in_ID', TYPES.NVarChar,in_id);  
         request.addParameter('in_firstname', TYPES.NVarChar , in_firstname);  
         request.addParameter('in_lastname', TYPES.NVarChar, in_lastname);  
-        request.addParameter('in_email', TYPES.NVarChar,in_email);  
+        request.addParameter('in_email', TYPES.NVarChar,in_email);          
+        request.addParameter('in_facebookId', TYPES.NVarChar,in_facebookId);  
         request.on('row', function(columns) {  
             columns.forEach(function(column) {  
               if (column.value === null) {  
@@ -250,7 +251,7 @@ exports.findMilestone = function(in_id, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Milestone WHERE milestoneID = @in_milestoneId;", function(err) {  
+        request = new Request("SELECT * FROM Milestone WHERE id = @in_milestoneId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -262,8 +263,8 @@ exports.findMilestone = function(in_id, callback) {
               if (column.value === null) {  
                   
               } else { 
-                  console.log(column); 
-                obj[column.metadata.colName] = column.value;  
+                    console.log(column); 
+                    obj[column.metadata.colName] = column.value;  
               }  
             }); 
             result.push(obj); 
@@ -291,7 +292,7 @@ exports.updateMilestone = function (in_id, in_to, in_description, in_projectId, 
 
 
     function executeStatement() {  
-        request = new Request("UPDATE Milestone SET to = @in_to, description = @in_description, projectID = @in_projectId WHERE milestoneID = @in_id;", function(err) {  
+        request = new Request("UPDATE Milestone SET to = @in_to, description = @in_description, project = @in_projectId WHERE id = @in_id;", function(err) {  
          if (err) {  
             console.log(err);}  
         });  
@@ -329,7 +330,7 @@ exports.findMilestoneByProjectId = function(in_projectId, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Milestone WHERE proectID = @in_projectId;", function(err) {  
+        request = new Request("SELECT * FROM Milestone WHERE id = @in_projectId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -368,7 +369,7 @@ exports.findMilestoneById = function(in_milestoneId, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Milestone WHERE milestoneID = @in_milestoneId;", function(err) {  
+        request = new Request("SELECT * FROM Milestone WHERE id = @in_milestoneId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -491,7 +492,7 @@ exports.findProject = function(in_id, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Project WHERE projectID = @in_projectId;", function(err) {  
+        request = new Request("SELECT * FROM Project WHERE id = @in_projectId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -575,7 +576,7 @@ exports.updateProject = function (in_id, in_title, in_description, callback) {
 
 
     function executeStatement() {  
-        request = new Request("UPDATE Project SET title = @in_title, description = @in_description WHERE projectID = @in_id;", function(err) {  
+        request = new Request("UPDATE Project SET title = @in_title, description = @in_description WHERE id = @in_id;", function(err) {  
          if (err) {  
             console.log(err);}  
         });  
@@ -659,7 +660,7 @@ exports.findTask = function(in_id, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Task WHERE taskID = @in_taskId;", function(err) {  
+        request = new Request("SELECT * FROM Task WHERE id = @in_taskId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -698,7 +699,7 @@ exports.findTaskByMilestoneID = function(in_milestoneId, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Task WHERE milestoneID = @in_milestoneId;", function(err) {  
+        request = new Request("SELECT * FROM Task WHERE milestone = @in_milestoneId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -738,7 +739,7 @@ exports.findCommentsByTaskId = function(in_taskId, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Comment WHERE taskID = @in_taskId;", function(err) {  
+        request = new Request("SELECT * FROM Comment WHERE task = @in_taskId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -779,7 +780,7 @@ var connection = new Connection(config);
 
 
     function executeStatement() {  
-        request = new Request("UPDATE Task SET title = @in_title, description = @in_description, state = @in_state, from = @in_from, to = @in_to, projectID = @in_project, milestoneID = @in_milestone, userID = @in_user WHERE taskID = @in_id;", function(err) {  
+        request = new Request("UPDATE Task SET title = @in_title, description = @in_description, state = @in_state, from = @in_from, to = @in_to, project = @in_project, milestone = @in_milestone, user = @in_user WHERE id = @in_id;", function(err) {  
          if (err) {  
             console.log(err);}  
         });  
@@ -910,7 +911,7 @@ exports.findComment = function(in_id, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Comment WHERE commentID = @in_commentId;", function(err) {  
+        request = new Request("SELECT * FROM Comment WHERE id = @in_commentId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -1034,7 +1035,7 @@ exports.findAllSolutionsForProblem = function(in_problemId, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Problem WHERE type = 'solution' and problemID = @in_problemId;", function(err) {  
+        request = new Request("SELECT * FROM Problem WHERE type = 'solution' and id = @in_problemId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
@@ -1076,7 +1077,7 @@ exports.updateComment = function (in_id, in_user, in_task, in_type, in_text, in_
 
 
     function executeStatement() {  
-        request = new Request(   "UPDATE Comment SET userID = @in_user, taskID = @in_task, type = @in_type, text = @in_text, state = @in_state, problemID = @in_problem WHERE commentID = @in_id;", function(err) {  
+        request = new Request(   "UPDATE Comment SET user = @in_user, task = @in_task, type = @in_type, text = @in_text, state = @in_state, problem = @in_problem WHERE id = @in_id;", function(err) {  
          if (err) {  
             console.log(err);}  
         });  
