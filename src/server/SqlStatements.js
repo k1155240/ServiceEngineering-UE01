@@ -331,7 +331,7 @@ exports.findMilestoneByProjectId = function(in_projectId, callback) {
     }); 
 
     function executeStatement() {  
-        request = new Request("SELECT * FROM Milestone WHERE _id = @in_projectId;", function(err) {  
+        request = new Request("SELECT * FROM Milestone WHERE project = @in_projectId;", function(err) {  
         if (err) {  
             console.log(err);}  
         });  
