@@ -123,7 +123,8 @@ exports.findUser = function(in_ID, callback) {
         request = new Request("SELECT * FROM Users WHERE ID = @in_ID;", function(err) {  
         if (err) {  
             console.log(err);}  
-        });  
+        });
+        request.addParameter('in_ID', TYPES.NVarChar,in_ID);  
         var result = [];
         request.on('row', function(columns) {  
             var obj = {};
