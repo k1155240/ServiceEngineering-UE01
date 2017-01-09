@@ -25,16 +25,17 @@ passport.use(new FacebookStrategy({
     },
     function(accessToken, refreshToken, profile, done) {
         console.log('profile ' + profile.id);
-        Mongo.findUserByFb(profile.id, function(users){
-            if(users.length > 0) {
-                done(null, users[0]);
-            }
-            else {
-                Mongo.insertUser('', profile.displayName, '', profile.id, function(id, user) {
-                    done(null, user);
-                });
-            }
-        });
+        done(null, {success: true});
+        // Mongo.findUserByFb(profile.id, function(users){
+        //     if(users.length > 0) {
+        //         done(null, users[0]);
+        //     }
+        //     else {
+        //         Mongo.insertUser('', profile.displayName, '', profile.id, function(id, user) {
+        //             done(null, user);
+        //         });
+        //     }
+        // });
     }
 ));
 
