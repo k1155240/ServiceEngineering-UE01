@@ -334,7 +334,7 @@ exports.updateMilestone = function (in_id, in_to, in_description, in_projectId, 
 
 
     function executeStatement() {  
-        request = new Request("UPDATE Milestone SET to = @in_to, description = @in_description, project = @in_projectId WHERE _id = @in_id;", function(err) {  
+        request = new Request("UPDATE Milestone SET [to] = @in_to, description = @in_description, project = @in_projectId WHERE _id = @in_id;", function(err) {  
          if (err) {  
             console.log(err);}  
         });  
@@ -822,7 +822,7 @@ var connection = new Connection(config);
 
 
     function executeStatement() {  
-        request = new Request("UPDATE Task SET title = @in_title, description = @in_description, state = @in_state, from = @in_from, to = @in_to, project = @in_project, milestone = @in_milestone, user = @in_user WHERE _id = @in_id;", function(err) {  
+        request = new Request("UPDATE Task SET title = @in_title, description = @in_description, state = @in_state, [from] = @in_from, [to] = @in_to, project = @in_project, milestone = @in_milestone, [user] = @in_user WHERE _id = @in_id;", function(err) {  
          if (err) {  
             console.log(err);}  
         });  
@@ -1119,7 +1119,7 @@ exports.updateComment = function (in_id, in_user, in_task, in_type, in_text, in_
 
 
     function executeStatement() {  
-        request = new Request(   "UPDATE Comment SET user = @in_user, task = @in_task, type = @in_type, text = @in_text, state = @in_state, problem = @in_problem WHERE _id = @in_id;", function(err) {  
+        request = new Request("UPDATE Comment SET [user] = @in_user, task = @in_task, type = @in_type, text = @in_text, state = @in_state, problem = @in_problem WHERE _id = @in_id;", function(err) {  
          if (err) {  
             console.log(err);}  
         });  
