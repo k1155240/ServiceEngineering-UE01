@@ -14,7 +14,7 @@ gulp.task("bundle", function () {
 });
 
 gulp.task("copyserver", function () {
-    return gulp.src(["src/server/server.js", "src/server/mongo.js"])
+    return gulp.src(["src/server/server.js", "src/server/mongo.js", "src/server/SqlStatements.js"])
         .pipe(gulp.dest("build/server"));
 });
 

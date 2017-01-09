@@ -4,10 +4,12 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser')
 var session = require('express-session')
 
-var Mongo = require('./build/server/mongo.js');
+//var Mongo = require('./build/server/mongo.js');
+var sqlDB = require('./build/server/SqlStatements.js');
 
 var passport = require('passport')
-  , FacebookStrategy = require('passport-facebook').Strategy;
+  , FacebookStrategy = require('passport-facebook').Strategy
+  , FacebookTokenStrategy = require('passport-facebook-token');
 
 var app = express();
 
@@ -18,24 +20,41 @@ app.use(session({ secret: 'thatsfunny' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new FacebookStrategy({
+passport.use(new FacebookStrategy({ 
         clientID: '1613716625604484',
         clientSecret: '7a7b2c6d52d9d250370865ccd9f5f114',
         callbackURL: "http://sepm.azurewebsites.net/auth/facebook/callback"
     },
     function(accessToken, refreshToken, profile, done) {
         console.log('profile ' + profile.id);
-        Mongo.findUserByFb(profile.id, function(users){
+        sqlDB.findUser(profile.id, function(users){
             if(users.length > 0) {
                 done(null, users[0]);
             }
             else {
-                Mongo.insertUser('', profile.displayName, '', profile.id, function(id, user) {
+                sqlDB.insertUser(profile.id, profile.displayName, '', '', function(id, user) {
                     done(null, user);
                 });
             }
         });
     }
+));
+
+passport.use(new FacebookTokenStrategy({
+    clientID: '559105414283188',
+    clientSecret: '2bfd1e271df4c63f8788d588ef17b43f'
+  }, function(accessToken, refreshToken, profile, done) {
+        sqlDB.findUser(profile.id, function(users){
+            if(users.length > 0) {
+                done(null, users[0]);
+            }
+            else {
+                sqlDB.insertUser(profile.id, profile.displayName, '','' , function(id, user) {
+                    done(null, user);
+                });
+            }
+        });
+  }
 ));
 
 passport.serializeUser(function(user, done) {
@@ -55,6 +74,14 @@ app.get('/auth/facebook/callback',
         failureRedirect: '/login' 
 }));
 
+app.get('/auth/facebook/token',
+  passport.authenticate('facebook-token'),
+  function (req, res) {
+    // do something with req.user
+    res.send(req.user? 200 : 401);
+  }
+);
+
 var router = express.Router();
 router.use(ensureAuthenticatedAPI);
 
@@ -62,14 +89,14 @@ router.route('/clear')
 
     // get all the users (accessed at GET /api/users)
     .get(function(req, res) {
-        Mongo.clear();
+        sqlDB.clear();
     });
 
 router.route('/users')
 
     // get all the users (accessed at GET /api/users)
     .get(function(req, res) {
-        Mongo.findAllUsers(function(users) {
+        sqlDB.findAllUsers(function(users) {
            res.json(users);
         });
     });
@@ -78,7 +105,7 @@ router.route('/users/:user_id')
 
     // get all the users (accessed at GET /api/users)
     .get(function(req, res) {
-        Mongo.findUser(req.params.user_id, function(users) {
+        sqlDB.findUser(req.params.user_id, function(users) {
            res.json(users);
         }); 
     });
@@ -89,11 +116,11 @@ router.route('/projects')
     .post(function(req, res) {
         var id = req.body.id;
         if (id) {
-            Mongo.updateProject(id, req.body.title, req.body.description, function(){
+            sqlDB.updateProject(id, req.body.title, req.body.description, function(){
                 res.json({success: true});
             });
         } else{
-            Mongo.insertProject(req.body.title, req.body.description, function(id){
+            sqlDB.insertProject(req.body.title, req.body.description, function(id){
                 console.log(id);
                 res.json({id: id});
             });
@@ -101,10 +128,9 @@ router.route('/projects')
     }) 
     // get all the projects (accessed at GET /api/projects)
     .get(function(req, res) {
-        //res.json(projects);
-        Mongo.findAllProjects(function(items) {
-           res.json(items);
-        });
+        sqlDB.findAllProjects(function(items) {
+          res.json(items);
+       });
     });
 
 router.route('/projects/:project_id')
@@ -112,7 +138,7 @@ router.route('/projects/:project_id')
     // get the project with that id (accessed at GET /api/peojects/:project_id)
     .get(function(req, res) {
         // res.json(projects.filter(function(p){ return p.id == req.params.project_id})[0]); 
-        Mongo.findProject(req.params.project_id, function(items) {
+        sqlDB.findProject(req.params.project_id, function(items) {
            res.json(items);
         });
     });
@@ -122,7 +148,7 @@ router.route('/projects/:project_id/milestones')
     // get the milestones of the project (accessed at GET /api/projects/:project_id/milestones)
     .get(function(req, res) {
         // res.json(milestones.filter(function(m){ return m.projectId == req.params.project_id})); 
-        Mongo.findMilestoneByProjectId(req.params.project_id, function(items) {
+        sqlDB.findMilestoneByProjectId(req.params.project_id, function(items) {
             res.json(items);
          });
     })
@@ -130,18 +156,18 @@ router.route('/projects/:project_id/milestones')
     .post(function(req, res) {
         var id = req.body.id;
         if (id) {
-            Mongo.updateMilestone(id, req.body.to, req.body.description, req.params.project_id, function(){
+            sqlDB.updateMilestone(id, req.body.to, req.body.description, req.params.project_id, function(){
                 res.json({success: true});
             });
         } else{
-            Mongo.insertMilestone(req.body.to, req.body.description, req.params.project_id, function(id){
+            sqlDB.insertMilestone(req.body.to, req.body.description, req.params.project_id, function(id){
                 res.json({id: id});
             });
         }           
     })
     
     .delete(function(req, res) {
-        Mongo.removeMilestone(req.body.id);
+        sqlDB.removeMilestone(req.body.id);
     });
 
 
@@ -150,7 +176,7 @@ router.route('/milestones/:milestone_id/tasks')
     // get the tasks of the milestone of the project (accessed at GET /api/milestones/:milestone_id/tasks)
     .get(function(req, res) {
         // res.json(milestones.filter(function(m){ return m.projectId == req.params.project_id})); 
-        Mongo.findTaskByMilestoneID(req.params.milestone_id, function(items) {
+        sqlDB.findTaskByMilestoneID(req.params.milestone_id, function(items) {
             res.json(items);
          });
     });
@@ -160,7 +186,7 @@ router.route('/milestones/:milestone_id')
     // get the milestones of the project (accessed at GET /api/projects/:project_id/milestones)
     .get(function(req, res) {
         // res.json(milestones.filter(function(m){ return m.projectId == req.params.project_id})); 
-        Mongo.findMilestone(req.params.milestone_id, function(items) {
+        sqlDB.findMilestone(req.params.milestone_id, function(items) {
             res.json(items);
          });
     });
@@ -168,7 +194,7 @@ router.route('/milestones/:milestone_id')
 router.route('/tasks')
 
     .delete(function(req, res){
-         Mongo.removeTaks(req.body.id);
+         sqlDB.removeTaks(req.body.id);
     })
 
     // create a task (accessed at POST /api/tasks)
@@ -176,12 +202,12 @@ router.route('/tasks')
         
         var id = req.body.id;
         if (id) {
-            Mongo.updateTask(id, req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.project, req.body.milestone, req.body.user, function() {
+            sqlDB.updateTask(id, req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.project, req.body.milestone, req.body.user, function() {
                 res.json({success: true});
             });
             
         } else{
-            Mongo.insertTask(req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.project, req.body.milestone, req.body.user, function(id){
+            sqlDB.insertTask(req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.project, req.body.milestone, req.body.user, function(id){
                 res.json({id: id});
             });
         } 
@@ -190,7 +216,7 @@ router.route('/tasks')
     // get all the tasks (accessed at GET /api/tasks)
     .get(function(req, res) {
         // res.json(tasks);
-         Mongo.findAllTasks(function(items) {
+         sqlDB.findAllTasks(function(items) {
             res.json(items);
          });
     });
@@ -200,7 +226,7 @@ router.route('/tasks/:task_id')
     // get the task with that id (accessed at GET /api/tasks/:task_id)
     .get(function(req, res) {
         // res.json(tasks.filter(function(t){ return t.id == req.params.task_id})[0]); 
-        Mongo.findTask(req.params.task_id, function(items) {
+        sqlDB.findTask(req.params.task_id, function(items) {
            res.json(items);
         });
     });
@@ -212,18 +238,18 @@ router.route('/tasks/:task_id/problems')
         
         var id = req.body.id;
         if (id) {
-            Mongo.updateComment(id, req.user._id, req.params.task_id, "problem", req.body.text, req.body.state, null, function(id){
+            sqlDB.updateComment(id, req.user._id, req.params.task_id, "problem", req.body.text, req.body.state, null, function(id){
                 res.json({success: true});
             }); 
         } else{
-            Mongo.insertComment(req.user._id, req.params.task_id, "problem", req.body.text, "open", null, function(id){
+            sqlDB.insertComment(req.user._id, req.params.task_id, "problem", req.body.text, "open", null, function(id){
                 res.json({id: id});
             });
         }
     })
     .get(function(req, res) {
         // res.json(comments.filter(function(c){ return c.taskId == req.params.task_id})); 
-         Mongo.findCommentsByTaskId(req.params.task_id, function(items) {
+         sqlDB.findCommentsByTaskId(req.params.task_id, function(items) {
            res.json(items);
         });
     });
@@ -233,7 +259,7 @@ router.route('/tasks/:task_id/problems')
 router.route('/problems')
     // get all comments (accessed at GET /api/comments)
     .get(function(req, res) {
-         Mongo.findAllProblems(function(items) {
+         sqlDB.findAllProblems(function(items) {
            res.json(items);
         });
     });
@@ -241,12 +267,12 @@ router.route('/problems')
 router.route('/problems/:problem_id/solutions')
     // get all comments (accessed at GET /api/comments)
     .get(function(req, res) {
-         Mongo.findAllSolutionsForProblem(req.params.problem_id, function(items) {
+         sqlDB.findAllSolutionsForProblem(req.params.problem_id, function(items) {
            res.json(items);
         });
     })
     .post(function(req, res) {
-         Mongo.insertComment(req.user._id, req.body.task, "solution", req.body.text, null, req.params.problem_id, function(id){
+         sqlDB.insertComment(req.user._id, req.body.task, "solution", req.body.text, null, req.params.problem_id, function(id){
             res.json({id: id});
         });
     });
@@ -255,7 +281,7 @@ router.route('/problems/:problem_id/solutions')
 router.route('/problems/:comment_id')
     // get the comment with that id (accessed at GET /api/comments/:comment_id)
     .get(function(req, res) {
-         Mongo.findComment(req.params.comment_id, function(items) {
+         sqlDB.findComment(req.params.comment_id, function(items) {
            res.json(items);
         });
     });
