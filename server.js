@@ -27,17 +27,16 @@ passport.use(new FacebookStrategy({
     },
     function(accessToken, refreshToken, profile, done) {
         console.log('profile ' + profile.id);
-        done(null, {id: 1});
-        // sqlDB.findUser(profile.id, function(users){
-        //     if(users.length > 0) {
-        //         done(null, users[0]);
-        //     }
-        //     else {
-        //         sqlDB.insertUser(profile.id, profile.displayName, '', '', function(id, user) {
-        //             done(null, user);
-        //         });
-        //     }
-        // });
+        sqlDB.findUser(profile.id, function(users){
+            if(users.length > 0) {
+                done(null, users[0]);
+            }
+            else {
+                sqlDB.insertUser(profile.id, profile.displayName, '', '', function(id, user) {
+                    done(null, user);
+                });
+            }
+        });
     }
 ));
 
