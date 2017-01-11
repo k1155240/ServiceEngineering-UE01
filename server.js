@@ -44,12 +44,12 @@ passport.use(new FacebookTokenStrategy({
     clientID: '1229894717047932',
     clientSecret: 'e842a1821c019e3024c611d232d3ca6c'
   }, function(accessToken, refreshToken, profile, done) {
-        sqlDB.findUser(profile.id, function(users){
+        sqlDB.findUserByFbId(profile.id, function(users){
             if(users.length > 0) {
                 done(null, users[0]);
             }
             else {
-                sqlDB.insertUser(profile.id, profile.displayName, '','' , function(id, user) {
+                sqlDB.insertUser(profile.id, '', profile.displayName, '' , function(id, user) {
                     done(null, user);
                 });
             }
