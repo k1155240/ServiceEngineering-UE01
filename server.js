@@ -78,7 +78,7 @@ app.get('/auth/facebook/token',
   passport.authenticate('facebook-token'),
   function (req, res) {
     // do something with req.user
-    res.send("test");
+    res.send(req.user? 200 : 401);
   }
 );
 
