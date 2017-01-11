@@ -74,11 +74,19 @@ app.get('/auth/facebook/callback',
         failureRedirect: '/login' 
 }));
 
+// app.get('/auth/facebook/token',
+//   passport.authenticate('facebook-token'),
+//   function (req, res) {
+//     // do something with req.user
+//     res.send(req.user? 200 : 401);
+//   }
+// );
+
 app.get('/auth/facebook/token',
-  passport.authenticate('facebook-token'),
+  //passport.authenticate('facebook-token'),
   function (req, res) {
     // do something with req.user
-    res.send(req.user? 200 : 401);
+    res.send("test");
   }
 );
 
