@@ -20,7 +20,7 @@ app.use(session({ secret: 'thatsfunny' }));
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new FacebookStrategy({ 
+passport.use(new FacebookStrategy({
         clientID: '1613716625604484',
         clientSecret: '7a7b2c6d52d9d250370865ccd9f5f114',
         callbackURL: "http://sepm.azurewebsites.net/auth/facebook/callback"
@@ -41,8 +41,8 @@ passport.use(new FacebookStrategy({
 ));
 
 passport.use(new FacebookTokenStrategy({
-    clientID: '559105414283188',
-    clientSecret: '2bfd1e271df4c63f8788d588ef17b43f'
+    clientID: '1229894717047932',
+    clientSecret: 'e842a1821c019e3024c611d232d3ca6c'
   }, function(accessToken, refreshToken, profile, done) {
         sqlDB.findUser(profile.id, function(users){
             if(users.length > 0) {
@@ -84,6 +84,7 @@ app.get('/auth/facebook/token',
 
 var router = express.Router();
 router.use(ensureAuthenticatedAPI);
+router.use(nocache);
 
 router.route('/clear')
 
@@ -122,15 +123,15 @@ router.route('/projects')
         } else{
             sqlDB.insertProject(req.body.title, req.body.description, function(id){
                 console.log(id);
-                res.json({id: id});
+                res.json({success: true, id: id});
             });
         }    
     }) 
     // get all the projects (accessed at GET /api/projects)
     .get(function(req, res) {
         sqlDB.findAllProjects(function(items) {
-          res.json(items);
-       });
+           res.json(items);
+        });
     });
 
 router.route('/projects/:project_id')
@@ -140,6 +141,11 @@ router.route('/projects/:project_id')
         // res.json(projects.filter(function(p){ return p.id == req.params.project_id})[0]); 
         sqlDB.findProject(req.params.project_id, function(items) {
            res.json(items);
+        });
+    })
+    .put(function(req, res) {
+        sqlDB.updateProject(req.params.project_id, req.body.title, req.body.description, function(){
+            res.json({success: true});
         });
     });
 
@@ -161,7 +167,7 @@ router.route('/projects/:project_id/milestones')
             });
         } else{
             sqlDB.insertMilestone(req.body.to, req.body.description, req.params.project_id, function(id){
-                res.json({id: id});
+                res.json({success: true, id: id});
             });
         }           
     })
@@ -189,6 +195,10 @@ router.route('/milestones/:milestone_id')
         sqlDB.findMilestone(req.params.milestone_id, function(items) {
             res.json(items);
          });
+    }).put(function(req, res) {
+        sqlDB.updateMilestone(req.params.milestone_id, req.body.to, req.body.description, req.body.project_id, function(){
+            res.json({success: true});
+        });
     });
 
 router.route('/tasks')
@@ -208,7 +218,7 @@ router.route('/tasks')
             
         } else{
             sqlDB.insertTask(req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.project, req.body.milestone, req.body.user, function(id){
-                res.json({id: id});
+                res.json({success: true, id: id});
             });
         } 
     })
@@ -229,6 +239,10 @@ router.route('/tasks/:task_id')
         sqlDB.findTask(req.params.task_id, function(items) {
            res.json(items);
         });
+    }).put(function(req, res) {
+        sqlDB.updateTask(req.params.task_id, req.body.title, req.body.description, req.body.state, req.body.from, req.body.to, req.body.project, req.body.milestone, req.body.user, function() {
+                res.json({success: true});
+            });
     });
 
 router.route('/tasks/:task_id/problems')
@@ -243,7 +257,7 @@ router.route('/tasks/:task_id/problems')
             }); 
         } else{
             sqlDB.insertComment(req.user._id, req.params.task_id, "problem", req.body.text, "open", null, function(id){
-                res.json({id: id});
+                res.json({success: true, id: id});
             });
         }
     })
@@ -273,7 +287,7 @@ router.route('/problems/:problem_id/solutions')
     })
     .post(function(req, res) {
          sqlDB.insertComment(req.user._id, req.body.task, "solution", req.body.text, null, req.params.problem_id, function(id){
-            res.json({id: id});
+            res.json({success: true, id: id});
         });
     });
 
@@ -284,6 +298,10 @@ router.route('/problems/:comment_id')
          sqlDB.findComment(req.params.comment_id, function(items) {
            res.json(items);
         });
+    }).put(function(req, res) {
+        sqlDB.updateComment(req.params.comment_id, req.user._id, req.body.task_id, req.body.type, req.body.text, req.body.state, req.body.problem_id, function(id){
+                res.json({success: true, id: id});
+            }); 
     });
 
 app.use('/api', router);
@@ -324,4 +342,11 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
   //return next();
     res.redirect('/login/')
+}
+
+function nocache(req, res, next) {
+  res.header('Cache-Control', 'private, no-cache, no-store, must-revalidate');
+  res.header('Expires', '-1');
+  res.header('Pragma', 'no-cache');
+  next();
 }
